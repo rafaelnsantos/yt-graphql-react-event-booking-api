@@ -3,8 +3,7 @@ const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const mongoose = require('mongoose');
 
-const graphQlSchema = require('./graphql/schema/index');
-const graphQlResolvers = require('./graphql/resolvers/index');
+const graphQLSchema = require('./schema');
 const isAuth = require('./middleware/is-auth');
 
 const app = express();
@@ -26,18 +25,15 @@ app.use(isAuth);
 app.use(
   '/graphql',
   graphqlHttp({
-    schema: graphQlSchema,
-    rootValue: graphQlResolvers,
+    schema: graphQLSchema,
     graphiql: true
   })
 );
 
 mongoose
-  .connect(
-    `mongodb+srv://${process.env.MONGO_USER}:${
-      process.env.MONGO_PASSWORD
-    }@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DB}?retryWrites=true`
-  )
+  .connect(`${process.env.MONGO_URI}?retryWrites=true`, {
+    useNewUrlParser: true
+  })
   .then(() => {
     app.listen(8000);
   })
