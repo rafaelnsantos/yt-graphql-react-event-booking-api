@@ -1,14 +1,11 @@
 const Event = require('../../models/event');
 const Booking = require('../../models/booking');
 const { userLoader, eventLoader } = require('./dataloaders');
-const { dateToString } = require('../../helpers/date');
 
 exports.resolver = {
   Booking: {
     event: ({ event }) => eventLoader.load(event),
-    user: ({ user }) => userLoader.load(user),
-    createdAt: ({ createdAt }) => dateToString(createdAt),
-    updatedAt: ({ updatedAt }) => dateToString(updatedAt)
+    user: ({ user }) => userLoader.load(user)
   },
   Query: {
     bookings: (_, args, req) => Booking.find({ user: req.userId })

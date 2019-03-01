@@ -1,11 +1,14 @@
 directive @isAuth on FIELD_DEFINITION
 
+scalar DateTime
+scalar Email
+
 type Booking {
     _id: ID!
     event: Event!
     user: User!
-    createdAt: String!
-    updatedAt: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
 }
 
 type Event {
@@ -13,13 +16,13 @@ type Event {
   title: String!
   description: String!
   price: Float!
-  date: String!
+  date: DateTime!
   creator: User!
 }
 
 type User {
   _id: ID!
-  email: String!
+  email: Email!
   createdEvents: [Event!]
 }
 
@@ -33,18 +36,18 @@ input EventInput {
   title: String!
   description: String!
   price: Float!
-  date: String!
+  date: DateTime!
 }
 
 input UserInput {
-  email: String!
+  email: Email!
   password: String!
 }
 
 type Query {
     events: [Event!]!
     bookings: [Booking!]! @isAuth
-    login(email: String!, password: String!): AuthData!
+    login(email: Email!, password: String!): AuthData!
 }
 
 type Mutation {

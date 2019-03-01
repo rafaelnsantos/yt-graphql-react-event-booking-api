@@ -55,7 +55,7 @@ const EventsPage = props => {
 
     const requestBody = {
       query: `
-          mutation CreateEvent($title: String!, $desc: String!, $price: Float!, $date: String!) {
+          mutation CreateEvent($title: String!, $desc: String!, $price: Float!, $date: DateTime!) {
             createEvent(eventInput: {title: $title, description: $desc, price: $price, date: $date}) {
               _id
               title

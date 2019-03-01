@@ -2,11 +2,9 @@ const Event = require('../../models/event');
 const User = require('../../models/user');
 
 const { userLoader } = require('./dataloaders');
-const { dateToString } = require('../../helpers/date');
 
 exports.resolver = {
   Event: {
-    date: ({ date }) => dateToString(date),
     creator: ({ creator }) => userLoader.load(creator)
   },
   Query: {
@@ -18,10 +16,10 @@ exports.resolver = {
         title: args.eventInput.title,
         description: args.eventInput.description,
         price: +args.eventInput.price,
-        date: new Date(args.eventInput.date),
+        date: args.eventInput.date,
         creator: req.userId
       });
-      let createdEvent;
+
       try {
         const createdEvent = await event.save();
         const creator = await User.findById(req.userId);

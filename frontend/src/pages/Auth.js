@@ -27,7 +27,7 @@ const AuthPage = props => {
 
     let requestBody = {
       query: `
-        query Login($email: String!, $password: String!) {
+        query Login($email: Email!, $password: String!) {
           login(email: $email, password: $password) {
             userId
             token
@@ -44,7 +44,7 @@ const AuthPage = props => {
     if (!isLogin) {
       requestBody = {
         query: `
-          mutation CreateUser($email: String!, $password: String!) {
+          mutation CreateUser($email: Email!, $password: String!) {
             createUser(userInput: {email: $email, password: $password}) {
               _id
               email
