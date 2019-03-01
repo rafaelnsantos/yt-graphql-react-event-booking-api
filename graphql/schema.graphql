@@ -1,3 +1,5 @@
+directive @isAuth on FIELD_DEFINITION
+
 type Booking {
     _id: ID!
     event: Event!
@@ -41,13 +43,13 @@ input UserInput {
 
 type Query {
     events: [Event!]!
-    bookings: [Booking!]!
+    bookings: [Booking!]! @isAuth
     login(email: String!, password: String!): AuthData!
 }
 
 type Mutation {
-    createEvent(eventInput: EventInput): Event
+    createEvent(eventInput: EventInput): Event @isAuth
     createUser(userInput: UserInput): User
-    bookEvent(eventId: ID!): Booking!
-    cancelBooking(bookingId: ID!): Event!
+    bookEvent(eventId: ID!): Booking! @isAuth
+    cancelBooking(bookingId: ID!): Event! @isAuth
 }

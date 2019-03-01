@@ -11,23 +11,10 @@ exports.resolver = {
     updatedAt: ({ updatedAt }) => dateToString(updatedAt)
   },
   Query: {
-    bookings: async (_, args, req) => {
-      if (!req.isAuth) {
-        throw new Error('Unauthenticated!');
-      }
-      try {
-        const bookings = await Booking.find({ user: req.userId });
-        return bookings;
-      } catch (err) {
-        throw err;
-      }
-    }
+    bookings: (_, args, req) => Booking.find({ user: req.userId })
   },
   Mutation: {
     bookEvent: async (_, args, req) => {
-      if (!req.isAuth) {
-        throw new Error('Unauthenticated!');
-      }
       const fetchedEvent = await Event.findOne({ _id: args.eventId });
       const booking = new Booking({
         user: req.userId,
@@ -37,9 +24,6 @@ exports.resolver = {
       return result;
     },
     cancelBooking: async (_, args, req) => {
-      if (!req.isAuth) {
-        throw new Error('Unauthenticated!');
-      }
       try {
         const booking = await Booking.findById(args.bookingId).populate(
           'event'
