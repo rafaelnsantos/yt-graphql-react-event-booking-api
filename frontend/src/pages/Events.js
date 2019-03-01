@@ -5,6 +5,7 @@ import Backdrop from '../components/Backdrop/Backdrop';
 import EventList from '../components/Events/EventList/EventList';
 import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/auth-context';
+import GraphQLContext from '../context/graphql-context';
 import './Events.css';
 
 const EventsPage = props => {
@@ -15,6 +16,7 @@ const EventsPage = props => {
   var isActive = true;
 
   const { token, userId } = useContext(AuthContext);
+  const { query } = useContext(GraphQLContext);
 
   const titleElRef = useRef();
   const priceElRef = useRef();
@@ -32,7 +34,7 @@ const EventsPage = props => {
     setCreating(true);
   };
 
-  const modalConfirmHandler = () => {
+  const modalConfirmHandler = async () => {
     setCreating(false);
     const title = titleElRef.current.value;
     const price = +priceElRef.current.value;
@@ -71,37 +73,23 @@ const EventsPage = props => {
       }
     };
 
-    fetch('http://localhost:8000/graphql', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token
-      }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Failed!');
+    try {
+      const data = await query(requestBody);
+      const updatedEvents = [...events];
+      updatedEvents.push({
+        _id: data.createEvent._id,
+        title: data.createEvent.title,
+        description: data.createEvent.description,
+        date: data.createEvent.date,
+        price: data.createEvent.price,
+        creator: {
+          _id: userId
         }
-        return res.json();
-      })
-      .then(resData => {
-        const updatedEvents = [...events];
-        updatedEvents.push({
-          _id: resData.data.createEvent._id,
-          title: resData.data.createEvent.title,
-          description: resData.data.createEvent.description,
-          date: resData.data.createEvent.date,
-          price: resData.data.createEvent.price,
-          creator: {
-            _id: userId
-          }
-        });
-        setEvents(updatedEvents);
-      })
-      .catch(err => {
-        console.log(err);
       });
+      setEvents(updatedEvents);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const modalCancelHandler = () => {
@@ -109,7 +97,7 @@ const EventsPage = props => {
     setSelectedEvent(null);
   };
 
-  const fetchEvents = () => {
+  const fetchEvents = async () => {
     setIsLoading(true);
     const requestBody = {
       query: `
@@ -129,32 +117,19 @@ const EventsPage = props => {
         `
     };
 
-    fetch('http://localhost:8000/graphql', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json'
+    try {
+      const data = await query(requestBody);
+      const events = data.events;
+      if (isActive) {
+        setEvents(events);
       }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Failed!');
-        }
-        return res.json();
-      })
-      .then(resData => {
-        const events = resData.data.events;
-        if (isActive) {
-          setEvents(events);
-        }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      if (isActive) {
         setIsLoading(false);
-      })
-      .catch(err => {
-        console.log(err);
-        if (isActive) {
-          setIsLoading(false);
-        }
-      });
+      }
+    }
   };
 
   const showDetailHandler = eventId => {
@@ -162,7 +137,7 @@ const EventsPage = props => {
     setSelectedEvent(selectedEvent);
   };
 
-  const bookEventHandler = () => {
+  const bookEventHandler = async () => {
     if (!token) {
       setSelectedEvent(null);
       return;
@@ -183,32 +158,15 @@ const EventsPage = props => {
       }
     };
 
-    fetch('http://localhost:8000/graphql', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token
-      }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Failed!');
-        }
-        return res.json();
-      })
-      .then(resData => {
-        console.log(resData);
-        setSelectedEvent(null);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      const data = await query(requestBody);
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setSelectedEvent(null);
+    }
   };
-
-  // componentWillUnmount() {
-  //   isActive = false;
-  // }
 
   return (
     <React.Fragment>

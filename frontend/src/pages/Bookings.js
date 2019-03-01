@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 
 import Spinner from '../components/Spinner/Spinner';
-import AuthContext from '../context/auth-context';
+import GraphQLContext from '../context/graphql-context';
 import BookingList from '../components/Bookings/BookingList/BookingList';
 import BookingsChart from '../components/Bookings/BookingsChart/BookingsChart';
 import BookingsControls from '../components/Bookings/BookingsControls/BookingsControls';
@@ -11,13 +11,13 @@ const BookingsPage = props => {
   const [bookings, setBookings] = useState([]);
   const [outputType, setOutputType] = useState('list');
 
-  const { token } = useContext(AuthContext);
+  const { query } = useContext(GraphQLContext);
 
   useEffect(() => {
     fetchBookings();
   }, []);
 
-  const fetchBookings = () => {
+  const fetchBookings = async () => {
     setIsLoading(true);
     const requestBody = {
       query: `
@@ -36,32 +36,19 @@ const BookingsPage = props => {
         `
     };
 
-    fetch('http://localhost:8000/graphql', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token
-      }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Failed!');
-        }
-        return res.json();
-      })
-      .then(resData => {
-        const bookings = resData.data.bookings;
-        setBookings(bookings);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.log(err);
-        setIsLoading(false);
-      });
+    try {
+      const data = await query(requestBody);
+      const bookings = data.bookings;
+      setBookings(bookings);
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const deleteBookingHandler = bookingId => {
+  const deleteBookingHandler = async bookingId => {
     setIsLoading(true);
     const requestBody = {
       query: `
@@ -77,30 +64,17 @@ const BookingsPage = props => {
       }
     };
 
-    fetch('http://localhost:8000/graphql', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token
-      }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Failed!');
-        }
-        return res.json();
-      })
-      .then(resData => {
-        const updatedBookings = bookings.filter(booking => {
-          return booking._id !== bookingId;
-        });
-        setBookings(updatedBookings);
-      })
-      .catch(err => {
-        console.log(err);
-        setIsLoading(false);
-      });
+    try {
+      await query(requestBody);
+      const updatedBookings = bookings.filter(
+        booking => booking._id !== bookingId
+      );
+      setBookings(updatedBookings);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const changeOutputTypeHandler = outputType => {

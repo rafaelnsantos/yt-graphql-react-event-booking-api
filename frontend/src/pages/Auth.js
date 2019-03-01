@@ -1,11 +1,13 @@
 import React, { useState, useContext, useRef } from 'react';
 import './Auth.css';
 import AuthContext from '../context/auth-context';
+import GraphQLContext from '../context/graphql-context';
 
 const AuthPage = props => {
   const [isLogin, setIsLogin] = useState(true);
 
   const { login } = useContext(AuthContext);
+  const { query } = useContext(GraphQLContext);
 
   const emailEl = useRef();
   const passwordEl = useRef();
@@ -14,7 +16,7 @@ const AuthPage = props => {
     setIsLogin(!isLogin);
   };
 
-  const submitHandler = event => {
+  const submitHandler = async event => {
     event.preventDefault();
     const email = emailEl.current.value;
     const password = passwordEl.current.value;
@@ -55,32 +57,12 @@ const AuthPage = props => {
         }
       };
     }
-
-    fetch('http://localhost:8000/graphql', {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Failed!');
-        }
-        return res.json();
-      })
-      .then(resData => {
-        if (resData.data.login.token) {
-          login(
-            resData.data.login.token,
-            resData.data.login.userId,
-            resData.data.login.tokenExpiration
-          );
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      const data = await query(requestBody);
+      login(data.login.token, data.login.userId, data.login.tokenExpiration);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
