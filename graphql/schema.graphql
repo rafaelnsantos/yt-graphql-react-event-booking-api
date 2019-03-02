@@ -4,11 +4,11 @@ scalar DateTime
 scalar Email
 
 type Booking {
-    _id: ID!
-    event: Event!
-    user: User!
-    createdAt: DateTime!
-    updatedAt: DateTime!
+  _id: ID!
+  event: Event!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Event {
@@ -44,15 +44,21 @@ input UserInput {
   password: String!
 }
 
+input UpdateEventInput {
+  _id: ID!
+  event: EventInput!
+}
+
 type Query {
-    events: [Event!]!
-    bookings: [Booking!]! @isAuth
-    login(email: Email!, password: String!): AuthData!
+  events: [Event!]!
+  bookings: [Booking!]! @isAuth
+  login(email: Email!, password: String!): AuthData!
 }
 
 type Mutation {
-    createEvent(eventInput: EventInput): Event @isAuth
-    createUser(userInput: UserInput): User
-    bookEvent(eventId: ID!): Booking! @isAuth
-    cancelBooking(bookingId: ID!): Event! @isAuth
+  createEvent(eventInput: EventInput!): Event! @isAuth
+  updateEvent(input: UpdateEventInput!): Event! @isAuth
+  createUser(userInput: UserInput!): User
+  bookEvent(eventId: ID!): Booking! @isAuth
+  cancelBooking(bookingId: ID!): Event! @isAuth
 }

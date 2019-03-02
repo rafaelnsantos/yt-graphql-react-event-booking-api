@@ -41,6 +41,17 @@ exports.resolver = {
       } catch (err) {
         throw err;
       }
+    },
+    async updateEvent(_, { input }, context) {
+      try {
+        return Event.findOneAndUpdate(
+          { _id: input._id, creator: context.userId },
+          input.event,
+          { new: true }
+        );
+      } catch (err) {
+        throw err;
+      }
     }
   }
 };
