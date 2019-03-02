@@ -3,10 +3,12 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../../models/user');
 const { eventLoader } = require('./dataloaders');
+const infoToProjection = require('../mongodb-projection');
 
 exports.resolver = {
   User: {
-    createdEvents: ({ createdEvents }) => eventLoader.loadMany(createdEvents)
+    createdEvents: ({ createdEvents }, _, ctx, info) =>
+      eventLoader(info).loadMany(createdEvents)
   },
   Mutation: {
     createUser: async (_, { userInput }) => {
@@ -36,7 +38,7 @@ exports.resolver = {
   },
   Query: {
     login: async (_, { email, password }) => {
-      const user = await User.findOne({ email: email });
+      const user = await User.findOne({ email: email }, { password: 1 });
       if (!user) {
         throw new Error('User does not exist!');
       }

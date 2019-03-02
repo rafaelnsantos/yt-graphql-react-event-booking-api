@@ -2,11 +2,12 @@ const Event = require('../../models/event');
 const User = require('../../models/user');
 
 const { userLoader } = require('./dataloaders');
-const { infoToProjection } = require('graphql-mongodb-projection');
+const infoToProjection = require('../mongodb-projection');
 
 exports.resolver = {
   Event: {
-    creator: ({ creator }) => userLoader.load(creator.toString())
+    creator: ({ creator }, _, ctx, info) =>
+      userLoader(info).load(creator.toString())
   },
   Query: {
     events: async (_, args, ctx, info) => Event.find({}, infoToProjection(info))

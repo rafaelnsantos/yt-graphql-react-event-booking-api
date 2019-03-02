@@ -1,12 +1,13 @@
 const Event = require('../../models/event');
 const Booking = require('../../models/booking');
 const { userLoader, eventLoader } = require('./dataloaders');
-const { infoToProjection } = require('graphql-mongodb-projection');
+const infoToProjection = require('../mongodb-projection');
 
 exports.resolver = {
   Booking: {
-    event: ({ event }) => eventLoader.load(event.toString()),
-    user: ({ user }) => userLoader.load(user.toString())
+    event: ({ event }, _, ctx, info) =>
+      eventLoader(info).load(event.toString()),
+    user: ({ user }, _, ctx, info) => userLoader(info).load(user.toString())
   },
   Query: {
     bookings: (_, args, { userId }, info) =>
