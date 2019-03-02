@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const debug = require('debug')('middleware:auth');
 module.exports = (req, res, next) => {
   const authHeader = req.get('Authorization');
   if (!authHeader) {
@@ -13,6 +13,7 @@ module.exports = (req, res, next) => {
   try {
     decodedToken = jwt.verify(token, 'somesupersecretkey');
   } catch (err) {
+    debug(err);
     return next();
   }
   if (!decodedToken) {

@@ -8,6 +8,8 @@ const auth = require('./middleware/auth');
 
 const app = express();
 
+const debug = require('debug');
+
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -26,7 +28,11 @@ app.use(
   '/graphql',
   graphqlHttp({
     schema: graphQLSchema,
-    graphiql: true
+    graphiql: true,
+    formatError(err) {
+      debug('graphql:error')(err);
+      return err;
+    }
   })
 );
 
@@ -35,8 +41,8 @@ mongoose
     useNewUrlParser: true
   })
   .then(() => {
-    app.listen(8000);
+    app.listen(8000, () => debug('server:info')('listening on port 8000'));
   })
   .catch(err => {
-    console.log(err);
+    debug('server:error')(err);
   });
