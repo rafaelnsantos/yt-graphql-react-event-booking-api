@@ -11,10 +11,6 @@ const batchEvents = eventIds => {
   return Event.find({ _id: { $in: eventIds } });
 };
 
-exports.userLoader = new DataLoader(batchUsers, {
-  cacheKeyFn: key => key.toString()
-});
+exports.userLoader = new DataLoader(batchUsers);
 
-exports.eventLoader = new DataLoader(batchEvents, {
-  cacheKeyFn: key => key.toString()
-});
+exports.eventLoader = new DataLoader(batchEvents);

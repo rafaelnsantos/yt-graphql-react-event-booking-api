@@ -2,27 +2,33 @@ const Event = require('../../models/event');
 const User = require('../../models/user');
 
 const { userLoader } = require('./dataloaders');
+const { infoToProjection } = require('graphql-mongodb-projection');
 
 exports.resolver = {
   Event: {
-    creator: ({ creator }) => userLoader.load(creator)
+    creator: ({ creator }) => userLoader.load(creator.toString())
   },
   Query: {
-    events: () => Event.find({})
+    events: async (_, args, ctx, info) => Event.find({}, infoToProjection(info))
   },
   Mutation: {
-    createEvent: async (_, args, req) => {
+    createEvent: async (_, { eventInput }, { userId }) => {
+      const { title, description, price, date } = eventInput;
+
       const event = new Event({
-        title: args.eventInput.title,
-        description: args.eventInput.description,
-        price: +args.eventInput.price,
-        date: args.eventInput.date,
-        creator: req.userId
+        title: title,
+        description: description,
+        price: +price,
+        date: date,
+        creator: userId
       });
 
       try {
         const createdEvent = await event.save();
-        const creator = await User.findById(req.userId);
+        const creator = await User.findOne(
+          { _id: userId },
+          { createdEvents: 1 }
+        );
 
         if (!creator) {
           throw new Error('User not found.');

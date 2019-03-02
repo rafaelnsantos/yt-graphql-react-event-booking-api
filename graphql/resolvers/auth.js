@@ -9,24 +9,26 @@ exports.resolver = {
     createdEvents: ({ createdEvents }) => eventLoader.loadMany(createdEvents)
   },
   Mutation: {
-    createUser: async (_, args) => {
+    createUser: async (_, { userInput }) => {
+      const { email, password } = userInput;
       try {
-        const existingUser = await User.findOne({
-          email: args.userInput.email
-        });
+        const existingUser = await User.findOne(
+          {
+            email: email
+          },
+          { _id: 1 }
+        );
         if (existingUser) {
           throw new Error('User exists already.');
         }
-        const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         const user = new User({
-          email: args.userInput.email,
+          email: email,
           password: hashedPassword
         });
 
-        const result = await user.save();
-
-        return result;
+        return user.save();
       } catch (err) {
         throw err;
       }
