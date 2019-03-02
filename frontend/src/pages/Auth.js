@@ -1,30 +1,26 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 import './Auth.css';
 import AuthContext from '../context/auth-context';
 import GraphQLContext from '../context/graphql-context';
+import { Formik, Form } from 'formik';
+import { object, string } from 'yup';
+import { Input } from '../components/Form';
+import Spinner from '../components/Spinner/Spinner';
 
 const AuthPage = props => {
   const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState();
 
   const { login } = useContext(AuthContext);
   const { query } = useContext(GraphQLContext);
 
-  const emailEl = useRef();
-  const passwordEl = useRef();
-
   const switchModeHandler = () => {
     setIsLogin(!isLogin);
+    setError();
   };
 
-  const submitHandler = async event => {
-    event.preventDefault();
-    const email = emailEl.current.value;
-    const password = passwordEl.current.value;
-
-    if (email.trim().length === 0 || password.trim().length === 0) {
-      return;
-    }
-
+  const submitHandler = async (values, { setSubmitting }) => {
+    setError();
     let requestBody = {
       query: `
         query Login($email: Email!, $password: String!) {
@@ -36,8 +32,8 @@ const AuthPage = props => {
         }
       `,
       variables: {
-        email: email,
-        password: password
+        email: values.email,
+        password: values.password
       }
     };
 
@@ -52,36 +48,87 @@ const AuthPage = props => {
           }
         `,
         variables: {
-          email: email,
-          password: password
+          email: values.email,
+          password: values.password
         }
       };
     }
     try {
       const data = await query(requestBody);
-      login(data.login.token, data.login.userId, data.login.tokenExpiration);
+      if (!isLogin) return;
+      const { token, userId, tokenExpiration } = data.login;
+      login(token, userId, tokenExpiration);
     } catch (err) {
-      console.log(err);
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <form className="auth-form" onSubmit={submitHandler}>
-      <div className="form-control">
-        <label htmlFor="email">E-Mail</label>
-        <input type="email" id="email" ref={emailEl} />
-      </div>
-      <div className="form-control">
-        <label htmlFor="password">Password</label>
-        <input type="password" id="password" ref={passwordEl} />
-      </div>
-      <div className="form-actions">
-        <button type="submit">Submit</button>
-        <button type="button" onClick={switchModeHandler}>
-          Switch to {isLogin ? 'Signup' : 'Login'}
-        </button>
-      </div>
-    </form>
+    <Formik
+      initialValues={{
+        email: '',
+        password: '',
+        confirmPassword: ''
+      }}
+      onSubmit={submitHandler}
+      validationSchema={object().shape({
+        email: string()
+          .email('Email not valid')
+          .required('Email is required'),
+        password: string()
+          .min(3, 'Minimum length is 3')
+          .required('Password is required!'),
+        confirmPassword: string().test(
+          'passwords-match',
+          'Passwords must match',
+          function(value) {
+            return isLogin || this.parent.password === value;
+          }
+        )
+      })}
+    >
+      {formikProps => (
+        <Form className="auth-form">
+          <Input
+            formikKey="email"
+            label="Email"
+            formikProps={formikProps}
+            placeholder="Enter your email"
+            type="email"
+          />
+          <Input
+            formikKey="password"
+            label="Password"
+            placeholder="Password"
+            autoComplete={isLogin ? 'current-password' : 'new-password'}
+            formikProps={formikProps}
+            type="password"
+          />
+          {!isLogin && (
+            <Input
+              formikKey="confirmPassword"
+              formikProps={formikProps}
+              label="Confirm Password"
+              placeholder="Confirm Password"
+              type="password"
+            />
+          )}
+          {formikProps.isSubmitting ? (
+            <Spinner />
+          ) : (
+            <div className="form-actions">
+              <button type="submit">{isLogin ? 'Login' : 'Signup'}</button>
+              <button type="button" onClick={switchModeHandler}>
+                Switch to {isLogin ? 'Signup' : 'Login'}
+              </button>
+            </div>
+          )}
+          {error && <div className="input-feedback">{error}</div>}
+        </Form>
+      )}
+    </Formik>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 
 import Modal from '../components/Modal/Modal';
 import Backdrop from '../components/Backdrop/Backdrop';
@@ -7,6 +7,9 @@ import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/auth-context';
 import GraphQLContext from '../context/graphql-context';
 import './Events.css';
+import { Formik, Form } from 'formik';
+import { object, string, number } from 'yup';
+import { Input, TextArea } from '../components/Form';
 
 const EventsPage = props => {
   const [creating, setCreating] = useState(false);
@@ -17,11 +20,6 @@ const EventsPage = props => {
 
   const { token, userId } = useContext(AuthContext);
   const { query } = useContext(GraphQLContext);
-
-  const titleElRef = useRef();
-  const priceElRef = useRef();
-  const dateElRef = useRef();
-  const descriptionElRef = useRef();
 
   useEffect(() => {
     fetchEvents();
@@ -34,24 +32,10 @@ const EventsPage = props => {
     setCreating(true);
   };
 
-  const modalConfirmHandler = async () => {
+  const modalConfirmHandler = async values => {
     setCreating(false);
-    const title = titleElRef.current.value;
-    const price = +priceElRef.current.value;
-    const date = dateElRef.current.value;
-    const description = descriptionElRef.current.value;
 
-    if (
-      title.trim().length === 0 ||
-      price <= 0 ||
-      date.trim().length === 0 ||
-      description.trim().length === 0
-    ) {
-      return;
-    }
-
-    const event = { title, price, date, description };
-    console.log(event);
+    const { title, price, date, description } = values;
 
     const requestBody = {
       query: `
@@ -62,6 +46,9 @@ const EventsPage = props => {
               description
               date
               price
+              creator {
+                _id
+              }
             }
           }
         `,
@@ -76,17 +63,9 @@ const EventsPage = props => {
     try {
       const data = await query(requestBody);
       const updatedEvents = [...events];
-      updatedEvents.push({
-        _id: data.createEvent._id,
-        title: data.createEvent.title,
-        description: data.createEvent.description,
-        date: data.createEvent.date,
-        price: data.createEvent.price,
-        creator: {
-          _id: userId
-        }
-      });
+      updatedEvents.push(data.createEvent);
       setEvents(updatedEvents);
+      setCreating(false);
     } catch (err) {
       console.log(err);
     }
@@ -172,32 +151,59 @@ const EventsPage = props => {
     <React.Fragment>
       {(creating || selectedEvent) && <Backdrop />}
       {creating && (
-        <Modal
-          title="Add Event"
-          canCancel
-          canConfirm
-          onCancel={modalCancelHandler}
-          onConfirm={modalConfirmHandler}
-          confirmText="Confirm"
-        >
-          <form>
-            <div className="form-control">
-              <label htmlFor="title">Title</label>
-              <input type="text" id="title" ref={titleElRef} />
-            </div>
-            <div className="form-control">
-              <label htmlFor="price">Price</label>
-              <input type="number" id="price" ref={priceElRef} />
-            </div>
-            <div className="form-control">
-              <label htmlFor="date">Date</label>
-              <input type="datetime-local" id="date" ref={dateElRef} />
-            </div>
-            <div className="form-control">
-              <label htmlFor="description">Description</label>
-              <textarea id="description" rows="4" ref={descriptionElRef} />
-            </div>
-          </form>
+        <Modal title="Add Event">
+          <Formik
+            initialValues={{
+              title: '',
+              price: '',
+              date: new Date().toISOString().slice(0, -5),
+              description: ''
+            }}
+            onSubmit={modalConfirmHandler}
+            validationSchema={object().shape({
+              title: string().required(),
+              price: number().required(),
+              description: string().required(),
+              date: string().required()
+            })}
+          >
+            {formikProps => (
+              <Form id="createForm">
+                <Input
+                  formikKey="title"
+                  label="Title"
+                  type="text"
+                  formikProps={formikProps}
+                />
+                <Input
+                  formikKey="price"
+                  label="Price"
+                  type="number"
+                  formikProps={formikProps}
+                />
+                <Input
+                  formikKey="date"
+                  label="Date"
+                  type="datetime-local"
+                  formikProps={formikProps}
+                />
+                <TextArea
+                  formikKey="description"
+                  rows="4"
+                  label="Description"
+                  formikProps={formikProps}
+                />
+                <section className="modal__actions">
+                  <button className="btn" onClick={modalCancelHandler}>
+                    Cancel
+                  </button>
+                  <button className="btn" type="submit">
+                    Create
+                  </button>
+                </section>
+              </Form>
+            )}
+          </Formik>
         </Modal>
       )}
       {selectedEvent && (
