@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 
 import Modal from '../components/Modal/Modal';
-import Backdrop from '../components/Backdrop/Backdrop';
 import EventList from '../components/Events/EventList/EventList';
 import Spinner from '../components/Spinner/Spinner';
 import AuthContext from '../context/auth-context';
@@ -33,8 +32,6 @@ const EventsPage = props => {
   };
 
   const modalConfirmHandler = async values => {
-    setCreating(false);
-
     const { title, price, date, description } = values;
 
     const requestBody = {
@@ -117,10 +114,6 @@ const EventsPage = props => {
   };
 
   const bookEventHandler = async () => {
-    if (!token) {
-      setSelectedEvent(null);
-      return;
-    }
     console.log(selectedEvent);
     const requestBody = {
       query: `
@@ -149,7 +142,6 @@ const EventsPage = props => {
 
   return (
     <React.Fragment>
-      {(creating || selectedEvent) && <Backdrop />}
       {creating && (
         <Modal title="Add Event">
           <Formik
@@ -209,11 +201,10 @@ const EventsPage = props => {
       {selectedEvent && (
         <Modal
           title={selectedEvent.title}
-          canCancel
-          canConfirm
           onCancel={modalCancelHandler}
-          onConfirm={bookEventHandler}
-          confirmText={token ? 'Book' : 'Confirm'}
+          onConfirm={token && bookEventHandler}
+          cancelText={!token && 'Close'}
+          confirmText="Book"
         >
           <h1>{selectedEvent.title}</h1>
           <h2>
