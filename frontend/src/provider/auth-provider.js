@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import AuthContext from '../context/auth-context';
+import { AuthContext } from '../context';
 
 const AuthProvider = props => {
   const [token, setToken] = useState(localStorage.getItem('token', null));

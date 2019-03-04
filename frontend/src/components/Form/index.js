@@ -1,4 +1,2 @@
-import Input from './Input/Input';
-import TextArea from './TextArea/TextArea';
-
-export { Input, TextArea };
+export { default as Input } from './Input/Input';
+export { default as TextArea } from './TextArea/TextArea';

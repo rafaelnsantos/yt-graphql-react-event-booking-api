@@ -1,11 +1,10 @@
 import React, { useState, useContext } from 'react';
 import './Auth.css';
-import AuthContext from '../context/auth-context';
-import GraphQLContext from '../context/graphql-context';
+import { AuthContext, GraphQLContext } from '../context';
 import { Formik, Form } from 'formik';
 import { object, string } from 'yup';
 import { Input } from '../components/Form';
-import Spinner from '../components/Spinner/Spinner';
+import { Spinner } from '../components';
 
 const AuthPage = props => {
   const [isLogin, setIsLogin] = useState(true);

@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 
-import GraphQLContext from '../context/graphql-context';
-import AuthContext from '../context/auth-context';
+import { GraphQLContext, AuthContext } from '../context';
 
 const GraphQLProvider = ({ url, children }) => {
   const { token } = useContext(AuthContext);

@@ -1,10 +1,8 @@
 import React, { useContext } from 'react';
-import AuthContext from './context/auth-context';
+import { AuthContext } from './context';
 import { Route, Redirect, Switch } from 'react-router-dom';
 
-import AuthPage from './pages/Auth';
-import BookingsPage from './pages/Bookings';
-import EventsPage from './pages/Events';
+import { AuthPage, BookingsPage, EventsPage } from './pages';
 
 const Routes = props => {
   const { token } = useContext(AuthContext);

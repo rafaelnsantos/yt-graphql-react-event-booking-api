@@ -1,12 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
 
-import Spinner from '../components/Spinner/Spinner';
-import GraphQLContext from '../context/graphql-context';
-import BookingList from '../components/Bookings/BookingList/BookingList';
-import BookingsChart from '../components/Bookings/BookingsChart/BookingsChart';
-import BookingsControls from '../components/Bookings/BookingsControls/BookingsControls';
-import Modal from '../components/Modal/Modal';
+import { GraphQLContext } from '../context';
+import {
+  BookingList,
+  BookingsChart,
+  BookingsControls
+} from '../components/Bookings';
+import { Modal, Spinner } from '../components';
 import { findInArrayById, removeFromArrayById } from '../helper/array-utils';
+
 const BookingsPage = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [bookings, setBookings] = useState([]);

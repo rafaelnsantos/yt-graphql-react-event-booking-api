@@ -1,10 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 
-import Modal from '../components/Modal/Modal';
-import EventList from '../components/Events/EventList/EventList';
-import Spinner from '../components/Spinner/Spinner';
-import AuthContext from '../context/auth-context';
-import GraphQLContext from '../context/graphql-context';
+import { Modal, EventList, Spinner } from '../components';
+import { AuthContext, GraphQLContext } from '../context';
 import './Events.css';
 import { Formik, Form } from 'formik';
 import { object, string, number } from 'yup';
