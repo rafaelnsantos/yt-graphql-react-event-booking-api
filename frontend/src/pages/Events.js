@@ -5,7 +5,7 @@ import { AuthContext, GraphQLContext } from '../context';
 import './Events.css';
 import { Formik, Form } from 'formik';
 import { object, string, number } from 'yup';
-import { Input, TextArea } from '../components/Form';
+import { Input, TextArea, Action } from '../components/Form';
 import { updateInArray, findInArrayById } from '../helper/array-utils';
 
 const validationEvent = object().shape({
@@ -21,6 +21,7 @@ const EventsPage = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [updating, setUpdating] = useState(null);
+  const [isBooking, setIsBooking] = useState(false);
 
   var isActive = true;
 
@@ -159,6 +160,7 @@ const EventsPage = props => {
   };
 
   const bookEventHandler = async () => {
+    setIsBooking(true);
     console.log(selectedEvent);
     const requestBody = {
       query: `
@@ -182,6 +184,7 @@ const EventsPage = props => {
       console.log(err);
     } finally {
       setSelectedEvent(null);
+      setIsBooking(false);
     }
   };
 
@@ -225,14 +228,12 @@ const EventsPage = props => {
                   label="Description"
                   formikProps={formikProps}
                 />
-                <section className="modal__actions">
-                  <button className="btn" onClick={modalCancelHandler}>
-                    Cancel
-                  </button>
-                  <button className="btn" type="submit">
-                    Create
-                  </button>
-                </section>
+                <Action
+                  onConfirm
+                  onCancel={modalCancelHandler}
+                  confirmText="Create"
+                  isLoading={formikProps.isSubmitting}
+                />
               </Form>
             )}
           </Formik>
@@ -276,14 +277,12 @@ const EventsPage = props => {
                   label="Description"
                   formikProps={formikProps}
                 />
-                <section className="modal__actions">
-                  <button className="btn" onClick={modalCancelHandler}>
-                    Cancel
-                  </button>
-                  <button className="btn" type="submit">
-                    Save
-                  </button>
-                </section>
+                <Action
+                  onConfirm
+                  onCancel={modalCancelHandler}
+                  confirmText="Save"
+                  isLoading={formikProps.isSubmitting}
+                />
               </Form>
             )}
           </Formik>
@@ -296,6 +295,7 @@ const EventsPage = props => {
           onConfirm={token && bookEventHandler}
           cancelText={!token && 'Close'}
           confirmText="Book"
+          isLoading={isBooking}
         >
           <h1>{selectedEvent.title}</h1>
           <h2>

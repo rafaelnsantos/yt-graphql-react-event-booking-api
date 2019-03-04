@@ -11,6 +11,7 @@ import { findInArrayById, removeFromArrayById } from '../helper/array-utils';
 
 const BookingsPage = props => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isCanceling, setIsCanceling] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [outputType, setOutputType] = useState('list');
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -53,11 +54,11 @@ const BookingsPage = props => {
   };
 
   const selectBookingHandler = bookingId => {
-    setSelectedBooking(bookingId);
+    setSelectedBooking(findInArrayById(bookings, bookingId));
   };
 
   const deleteBookingHandler = async () => {
-    setIsLoading(true);
+    setIsCanceling(true);
     const requestBody = {
       query: `
           mutation CancelBooking($id: ID!) {
@@ -68,19 +69,22 @@ const BookingsPage = props => {
           }
         `,
       variables: {
-        id: selectedBooking
+        id: selectedBooking._id
       }
     };
 
     try {
       await query(requestBody);
-      const updatedBookings = removeFromArrayById(bookings, selectedBooking);
+      const updatedBookings = removeFromArrayById(
+        bookings,
+        selectedBooking._id
+      );
       setBookings(updatedBookings);
     } catch (err) {
       console.log(err);
     } finally {
       setSelectedBooking(null);
-      setIsLoading(false);
+      setIsCanceling(false);
     }
   };
 
@@ -101,8 +105,9 @@ const BookingsPage = props => {
             title="Cancel Booking"
             onCancel={selectBookingHandler.bind(this, null)}
             onConfirm={deleteBookingHandler}
+            isLoading={isCanceling}
           >
-            {findInArrayById(bookings, selectedBooking).event.title}
+            {selectedBooking.event.title}
           </Modal>
         )}
         <BookingsControls

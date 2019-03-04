@@ -1,15 +1,8 @@
 import React from 'react';
 import Backdrop from '../Backdrop/Backdrop';
 import './Modal.css';
-
-const modal = ({
-  title,
-  children,
-  onConfirm,
-  onCancel,
-  cancelText,
-  confirmText
-}) => (
+import { Action } from '../Form';
+const modal = ({ title, children, ...rest }) => (
   <React.Fragment>
     <Backdrop />
     <div className="modal">
@@ -17,20 +10,7 @@ const modal = ({
         <h1>{title}</h1>
       </header>
       <section className="modal__content">{children}</section>
-      {(onCancel || onConfirm) && (
-        <section className="modal__actions">
-          {onCancel && (
-            <button className="btn" onClick={onCancel}>
-              {cancelText || 'Cancel'}
-            </button>
-          )}
-          {onConfirm && (
-            <button className="btn" onClick={onConfirm}>
-              {confirmText || 'Confirm'}
-            </button>
-          )}
-        </section>
-      )}
+      <Action {...rest} />
     </div>
   </React.Fragment>
 );
