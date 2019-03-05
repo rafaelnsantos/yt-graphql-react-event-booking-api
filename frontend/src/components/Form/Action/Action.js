@@ -1,11 +1,13 @@
 import React from 'react';
+import { Error } from '../..';
 
-const modal = ({ onConfirm, onCancel, cancelText, confirmText }) => (
+const modal = ({ onConfirm, onCancel, cancelText, confirmText, error }) => (
   <React.Fragment>
+    <Error message={error} />
     {(onCancel || onConfirm) && (
       <section className="modal__actions">
         {onCancel && (
-          <button className="btn" onClick={onCancel}>
+          <button type="button" className="btn" onClick={onCancel}>
             {cancelText || 'Cancel'}
           </button>
         )}
@@ -15,9 +17,7 @@ const modal = ({ onConfirm, onCancel, cancelText, confirmText }) => (
           </button>
         ) : (
           confirmText && (
-            <button type="submit" className="btn">
-              {confirmText || 'Confirm'}
-            </button>
+            <button className="btn">{confirmText || 'Confirm'}</button>
           )
         )}
       </section>

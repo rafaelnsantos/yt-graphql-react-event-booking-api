@@ -15,6 +15,7 @@ const BookingsPage = props => {
   const [bookings, setBookings] = useState([]);
   const [outputType, setOutputType] = useState('list');
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [error, setError] = useState();
 
   const { query } = useContext(GraphQLContext);
 
@@ -54,6 +55,7 @@ const BookingsPage = props => {
   };
 
   const selectBookingHandler = bookingId => {
+    setError();
     setSelectedBooking(findInArrayById(bookings, bookingId));
   };
 
@@ -80,10 +82,10 @@ const BookingsPage = props => {
         selectedBooking._id
       );
       setBookings(updatedBookings);
-    } catch (err) {
-      console.log(err);
-    } finally {
       setSelectedBooking(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
       setIsCanceling(false);
     }
   };
@@ -103,6 +105,7 @@ const BookingsPage = props => {
           onCancel={selectBookingHandler.bind(this, null)}
           onConfirm={deleteBookingHandler}
           isLoading={isCanceling}
+          error={error}
         >
           {selectedBooking.event.title}
         </Modal>

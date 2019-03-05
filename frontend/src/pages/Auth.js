@@ -4,6 +4,7 @@ import { AuthContext, GraphQLContext } from '../context';
 import { Formik } from 'formik';
 import { object, string } from 'yup';
 import { Input, Form } from '../components/Form';
+import { Error } from '../components';
 
 const AuthPage = props => {
   const [isLogin, setIsLogin] = useState(true);
@@ -113,13 +114,13 @@ const AuthPage = props => {
               type="password"
             />
           )}
+          <Error message={error} />
           <div className="form-actions">
-            <button type="submit">{isLogin ? 'Login' : 'Signup'}</button>
+            <button>{isLogin ? 'Login' : 'Signup'}</button>
             <button type="button" onClick={switchModeHandler}>
               Switch to {isLogin ? 'Signup' : 'Login'}
             </button>
           </div>
-          {error && <div className="input-feedback">{error}</div>}
         </Form>
       )}
     </Formik>

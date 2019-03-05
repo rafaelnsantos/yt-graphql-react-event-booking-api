@@ -22,6 +22,7 @@ const EventsPage = props => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [updating, setUpdating] = useState(null);
   const [isBooking, setIsBooking] = useState(false);
+  const [error, setError] = useState();
 
   var isActive = true;
 
@@ -36,10 +37,11 @@ const EventsPage = props => {
   }, []);
 
   const startCreateEventHandler = () => {
+    setError();
     setCreating(true);
   };
 
-  const modalConfirmHandler = async values => {
+  const modalConfirmHandler = async (values, { setSubmitting }) => {
     const { title, price, date, description } = values;
 
     const requestBody = {
@@ -72,11 +74,13 @@ const EventsPage = props => {
       setEvents(updatedEvents);
       setCreating(false);
     } catch (err) {
-      console.log(err);
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const modalConfirmUpdateHandler = async values => {
+  const modalConfirmUpdateHandler = async (values, { setSubmitting }) => {
     const { title, price, date, description } = values;
 
     const requestBody = {
@@ -105,7 +109,9 @@ const EventsPage = props => {
       setUpdating(null);
       setEvents(updatedEvents);
     } catch (err) {
-      console.log(err);
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -114,6 +120,7 @@ const EventsPage = props => {
   };
 
   const modalCancelHandler = () => {
+    setError();
     setCreating(false);
     setSelectedEvent(null);
     setUpdating(null);
@@ -155,8 +162,7 @@ const EventsPage = props => {
   };
 
   const showDetailHandler = eventId => {
-    const selectedEvent = events.find(e => e._id === eventId);
-    setSelectedEvent(selectedEvent);
+    setSelectedEvent(findInArrayById(events, eventId));
   };
 
   const bookEventHandler = async () => {
@@ -180,10 +186,10 @@ const EventsPage = props => {
     try {
       const data = await query(requestBody);
       console.log(data);
-    } catch (err) {
-      console.log(err);
-    } finally {
       setSelectedEvent(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
       setIsBooking(false);
     }
   };
@@ -228,7 +234,11 @@ const EventsPage = props => {
                   label="Description"
                   formikProps={formikProps}
                 />
-                <Action onCancel={modalCancelHandler} confirmText="Create" />
+                <Action
+                  onCancel={modalCancelHandler}
+                  confirmText="Create"
+                  error={error}
+                />
               </Form>
             )}
           </Formik>
@@ -272,7 +282,11 @@ const EventsPage = props => {
                   label="Description"
                   formikProps={formikProps}
                 />
-                <Action onCancel={modalCancelHandler} confirmText="Save" />
+                <Action
+                  onCancel={modalCancelHandler}
+                  confirmText="Save"
+                  error={error}
+                />
               </Form>
             )}
           </Formik>
@@ -286,6 +300,7 @@ const EventsPage = props => {
           cancelText={!token && 'Close'}
           confirmText={token && 'Book'}
           isLoading={isBooking}
+          error={error}
         >
           <h1>{selectedEvent.title}</h1>
           <h2>
