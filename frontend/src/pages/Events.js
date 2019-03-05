@@ -116,6 +116,7 @@ const EventsPage = props => {
   };
 
   const editHandler = eventId => {
+    setError();
     setUpdating(findInArrayById(events, eventId));
   };
 
@@ -162,6 +163,7 @@ const EventsPage = props => {
   };
 
   const showDetailHandler = eventId => {
+    setError();
     setSelectedEvent(findInArrayById(events, eventId));
   };
 
