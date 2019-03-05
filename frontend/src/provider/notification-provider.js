@@ -6,35 +6,29 @@ const _notifications = [];
 const _warnings = [];
 const _errors = [];
 
+const queue = (queue, notification, seconds, setQueue) => {
+  queue.unshift(notification);
+  setQueue([...queue]);
+  setTimeout(() => {
+    queue.pop();
+    setQueue([...queue]);
+  }, seconds * 1000);
+};
+
 const AlertProvider = props => {
   const [notifications, setNotifications] = useState([]);
   const [warnings, setWarnings] = useState([]);
   const [errors, setErrors] = useState([]);
 
   const sendNotification = (notification, seconds = 5) => {
-    _notifications.unshift(notification);
-    setNotifications([..._notifications]);
-    setTimeout(() => {
-      _notifications.pop();
-      setNotifications([..._notifications]);
-    }, seconds * 1000);
+    queue(_notifications, notification, seconds, setNotifications);
   };
   const sendWarning = (notification, seconds = 5) => {
-    _warnings.unshift(notification);
-    setWarnings([..._warnings]);
-    setTimeout(() => {
-      _warnings.pop();
-      setWarnings([..._warnings]);
-    }, seconds * 1000);
+    queue(_warnings, notification, seconds, setWarnings);
   };
 
   const sendError = (notification, seconds = 5) => {
-    _errors.unshift(notification);
-    setErrors([..._errors]);
-    setTimeout(() => {
-      _errors.pop();
-      setErrors([..._errors]);
-    }, seconds * 1000);
+    queue(_errors, notification, seconds, setErrors);
   };
 
   return (
