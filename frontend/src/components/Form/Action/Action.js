@@ -17,7 +17,9 @@ const modal = ({ onConfirm, onCancel, cancelText, confirmText, error }) => (
           </button>
         ) : (
           confirmText && (
-            <button className="btn">{confirmText || 'Confirm'}</button>
+            <button type="submit" className="btn">
+              {confirmText || 'Confirm'}
+            </button>
           )
         )}
       </section>

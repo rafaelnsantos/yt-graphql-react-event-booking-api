@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 
-import { GraphQLContext } from '../context';
+import { GraphQLContext, NotificationContext } from '../context';
 import {
   BookingList,
   BookingsChart,
@@ -18,6 +18,7 @@ const BookingsPage = props => {
   const [error, setError] = useState();
 
   const { query } = useContext(GraphQLContext);
+  const { sendNotification } = useContext(NotificationContext);
 
   useEffect(() => {
     fetchBookings();
@@ -76,12 +77,13 @@ const BookingsPage = props => {
     };
 
     try {
-      await query(requestBody);
+      const data = await query(requestBody);
       const updatedBookings = removeFromArrayById(
         bookings,
         selectedBooking._id
       );
       setBookings(updatedBookings);
+      sendNotification(`Booking ${data.cancelBooking.title} canceled`);
       setSelectedBooking(null);
     } catch (err) {
       setError(err.message);

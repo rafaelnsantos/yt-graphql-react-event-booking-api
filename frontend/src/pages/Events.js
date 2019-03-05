@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 
 import { Modal, EventList } from '../components';
-import { AuthContext, GraphQLContext } from '../context';
+import { AuthContext, GraphQLContext, NotificationContext } from '../context';
 import './Events.css';
 import { Formik } from 'formik';
 import { object, string, number } from 'yup';
@@ -23,6 +23,7 @@ const EventsPage = props => {
   const [updating, setUpdating] = useState(null);
   const [isBooking, setIsBooking] = useState(false);
   const [error, setError] = useState();
+  const { sendNotification } = useContext(NotificationContext);
 
   var isActive = true;
 
@@ -73,6 +74,7 @@ const EventsPage = props => {
       updatedEvents.push(data.createEvent);
       setEvents(updatedEvents);
       setCreating(false);
+      sendNotification(`Event ${data.createEvent.title} created`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -85,7 +87,7 @@ const EventsPage = props => {
 
     const requestBody = {
       query: `
-        mutation CreateEvent($_id: ID!, $title: String!, $desc: String!, $price: Float!, $date: DateTime!) {
+        mutation UpdateEvent($_id: ID!, $title: String!, $desc: String!, $price: Float!, $date: DateTime!) {
           updateEvent(input: {_id: $_id, event: {title: $title, description: $desc, price: $price, date: $date}}) {
             _id
             title
@@ -108,6 +110,7 @@ const EventsPage = props => {
       const updatedEvents = updateInArray(events, data.updateEvent);
       setUpdating(null);
       setEvents(updatedEvents);
+      sendNotification(`Event ${data.updateEvent.title} updated`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -188,6 +191,7 @@ const EventsPage = props => {
     try {
       const data = await query(requestBody);
       console.log(data);
+      sendNotification(`Event ${selectedEvent.title} booked`);
       setSelectedEvent(null);
     } catch (err) {
       setError(err.message);
