@@ -1,10 +1,9 @@
 import React, { useState, useContext } from 'react';
 import './Auth.css';
 import { AuthContext, GraphQLContext } from '../context';
-import { Formik, Form } from 'formik';
+import { Formik } from 'formik';
 import { object, string } from 'yup';
-import { Input } from '../components/Form';
-import { Spinner } from '../components';
+import { Input, Form } from '../components/Form';
 
 const AuthPage = props => {
   const [isLogin, setIsLogin] = useState(true);
@@ -89,7 +88,7 @@ const AuthPage = props => {
       })}
     >
       {formikProps => (
-        <Form className="auth-form">
+        <Form className="auth-form" isLoading={formikProps.isSubmitting}>
           <Input
             formikKey="email"
             label="Email"
@@ -114,16 +113,12 @@ const AuthPage = props => {
               type="password"
             />
           )}
-          {formikProps.isSubmitting ? (
-            <Spinner />
-          ) : (
-            <div className="form-actions">
-              <button type="submit">{isLogin ? 'Login' : 'Signup'}</button>
-              <button type="button" onClick={switchModeHandler}>
-                Switch to {isLogin ? 'Signup' : 'Login'}
-              </button>
-            </div>
-          )}
+          <div className="form-actions">
+            <button type="submit">{isLogin ? 'Login' : 'Signup'}</button>
+            <button type="button" onClick={switchModeHandler}>
+              Switch to {isLogin ? 'Signup' : 'Login'}
+            </button>
+          </div>
           {error && <div className="input-feedback">{error}</div>}
         </Form>
       )}

@@ -1,24 +1,26 @@
 import React from 'react';
-import { Spinner } from '../../';
-const modal = ({ onConfirm, onCancel, cancelText, confirmText, isLoading }) => (
+
+const modal = ({ onConfirm, onCancel, cancelText, confirmText }) => (
   <React.Fragment>
-    {isLoading ? (
-      <Spinner />
-    ) : (
-      (onCancel || onConfirm) && (
-        <section className="modal__actions">
-          {onCancel && (
-            <button className="btn" onClick={onCancel}>
-              {cancelText || 'Cancel'}
-            </button>
-          )}
-          {onConfirm && (
-            <button type="submit" className="btn" onClick={onConfirm}>
+    {(onCancel || onConfirm) && (
+      <section className="modal__actions">
+        {onCancel && (
+          <button className="btn" onClick={onCancel}>
+            {cancelText || 'Cancel'}
+          </button>
+        )}
+        {onConfirm ? (
+          <button className="btn" onClick={onConfirm}>
+            {confirmText || 'Confirm'}
+          </button>
+        ) : (
+          confirmText && (
+            <button type="submit" className="btn">
               {confirmText || 'Confirm'}
             </button>
-          )}
-        </section>
-      )
+          )
+        )}
+      </section>
     )}
   </React.Fragment>
 );

@@ -1,11 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 
-import { Modal, EventList, Spinner } from '../components';
+import { Modal, EventList } from '../components';
 import { AuthContext, GraphQLContext } from '../context';
 import './Events.css';
-import { Formik, Form } from 'formik';
+import { Formik } from 'formik';
 import { object, string, number } from 'yup';
-import { Input, TextArea, Action } from '../components/Form';
+import { Input, TextArea, Action, Form } from '../components/Form';
 import { updateInArray, findInArrayById } from '../helper/array-utils';
 
 const validationEvent = object().shape({
@@ -203,7 +203,7 @@ const EventsPage = props => {
             validationSchema={validationEvent}
           >
             {formikProps => (
-              <Form id="createForm">
+              <Form id="createForm" isLoading={formikProps.isSubmitting}>
                 <Input
                   formikKey="title"
                   label="Title"
@@ -228,12 +228,7 @@ const EventsPage = props => {
                   label="Description"
                   formikProps={formikProps}
                 />
-                <Action
-                  onConfirm
-                  onCancel={modalCancelHandler}
-                  confirmText="Create"
-                  isLoading={formikProps.isSubmitting}
-                />
+                <Action onCancel={modalCancelHandler} confirmText="Create" />
               </Form>
             )}
           </Formik>
@@ -252,7 +247,7 @@ const EventsPage = props => {
             validationSchema={validationEvent}
           >
             {formikProps => (
-              <Form id="createForm">
+              <Form id="createForm" isLoading={formikProps.isSubmitting}>
                 <Input
                   formikKey="title"
                   label="Title"
@@ -277,12 +272,7 @@ const EventsPage = props => {
                   label="Description"
                   formikProps={formikProps}
                 />
-                <Action
-                  onConfirm
-                  onCancel={modalCancelHandler}
-                  confirmText="Save"
-                  isLoading={formikProps.isSubmitting}
-                />
+                <Action onCancel={modalCancelHandler} confirmText="Save" />
               </Form>
             )}
           </Formik>
@@ -294,7 +284,7 @@ const EventsPage = props => {
           onCancel={modalCancelHandler}
           onConfirm={token && bookEventHandler}
           cancelText={!token && 'Close'}
-          confirmText="Book"
+          confirmText={token && 'Book'}
           isLoading={isBooking}
         >
           <h1>{selectedEvent.title}</h1>
@@ -313,16 +303,13 @@ const EventsPage = props => {
           </button>
         </div>
       )}
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <EventList
-          events={events}
-          authUserId={userId}
-          onViewDetail={showDetailHandler}
-          onEdit={editHandler}
-        />
-      )}
+      <EventList
+        events={events}
+        authUserId={userId}
+        onViewDetail={showDetailHandler}
+        onEdit={editHandler}
+        isLoading={isLoading}
+      />
     </React.Fragment>
   );
 };

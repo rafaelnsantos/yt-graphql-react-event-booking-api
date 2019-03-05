@@ -6,7 +6,7 @@ import {
   BookingsChart,
   BookingsControls
 } from '../components/Bookings';
-import { Modal, Spinner } from '../components';
+import { Modal } from '../components';
 import { findInArrayById, removeFromArrayById } from '../helper/array-utils';
 
 const BookingsPage = props => {
@@ -95,36 +95,33 @@ const BookingsPage = props => {
       setOutputType('chart');
     }
   };
-
-  let content = <Spinner />;
-  if (!isLoading) {
-    content = (
-      <React.Fragment>
-        {selectedBooking && (
-          <Modal
-            title="Cancel Booking"
-            onCancel={selectBookingHandler.bind(this, null)}
-            onConfirm={deleteBookingHandler}
-            isLoading={isCanceling}
-          >
-            {selectedBooking.event.title}
-          </Modal>
-        )}
-        <BookingsControls
-          activeOutputType={outputType}
-          onChange={changeOutputTypeHandler}
+  return (
+    <React.Fragment>
+      {selectedBooking && (
+        <Modal
+          title="Cancel Booking"
+          onCancel={selectBookingHandler.bind(this, null)}
+          onConfirm={deleteBookingHandler}
+          isLoading={isCanceling}
+        >
+          {selectedBooking.event.title}
+        </Modal>
+      )}
+      <BookingsControls
+        activeOutputType={outputType}
+        onChange={changeOutputTypeHandler}
+      />
+      {outputType === 'list' ? (
+        <BookingList
+          isLoading={isLoading}
+          bookings={bookings}
+          onDelete={selectBookingHandler}
         />
-        <div>
-          {outputType === 'list' ? (
-            <BookingList bookings={bookings} onDelete={selectBookingHandler} />
-          ) : (
-            <BookingsChart bookings={bookings} />
-          )}
-        </div>
-      </React.Fragment>
-    );
-  }
-  return <React.Fragment>{content}</React.Fragment>;
+      ) : (
+        <BookingsChart bookings={bookings} />
+      )}
+    </React.Fragment>
+  );
 };
 
 export default BookingsPage;
