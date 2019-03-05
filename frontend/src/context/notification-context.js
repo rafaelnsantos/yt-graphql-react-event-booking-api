@@ -2,5 +2,9 @@ import React from 'react';
 
 export default React.createContext({
   sendNotification: message => {},
-  notifications: []
+  notifications: [],
+  sendWarning: message => {},
+  Warnings: [],
+  sendError: message => {},
+  errors: []
 });

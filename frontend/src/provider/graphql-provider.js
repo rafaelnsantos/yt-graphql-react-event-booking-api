@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-
-import { GraphQLContext, AuthContext } from '../context';
-
-const GraphQLProvider = ({ url, children }) => {
-  const { token } = useContext(AuthContext);
+import { GraphQLContext, AuthContext, NotificationContext } from '../context';
+import { withRouter } from 'react-router-dom';
+const GraphQLProvider = ({ url, children, history }) => {
+  const { token, logout } = useContext(AuthContext);
+  const { sendError } = useContext(NotificationContext);
 
   const query = async request => {
     try {
@@ -23,7 +23,12 @@ const GraphQLProvider = ({ url, children }) => {
       }
       return data;
     } catch (err) {
-      console.log(err);
+      console.log(err.message === 'Unauthenticated');
+      if (err.message === 'Unauthenticated') {
+        logout();
+        sendError('Token expired, please do login again');
+        history.push('/auth');
+      }
       throw err;
     }
   };
@@ -39,4 +44,4 @@ const GraphQLProvider = ({ url, children }) => {
   );
 };
 
-export default GraphQLProvider;
+export default withRouter(GraphQLProvider);

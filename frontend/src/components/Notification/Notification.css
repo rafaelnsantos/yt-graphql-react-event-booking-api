@@ -18,3 +18,31 @@
     clear: left;
     padding: 3px;
 } 
+
+.info-msg,
+.success-msg,
+.warning-msg,
+.error-msg {
+  margin: 12px auto;
+  padding: 3px;
+  border-radius: 3px 3px 3px 3px;
+  box-shadow:1px 1px 3px #888;
+}
+
+.warning-msg {
+  color: #9F6000;
+  background-color: #FEEFB3;
+}
+
+.info-msg {
+  color: #059;
+  background-color: #BEF;
+}
+.success-msg {
+  color: #270;
+  background-color: #DFF2BF;
+}
+.warning-msg {
+  color: #9F6000;
+  background-color: #FEEFB3;
+}
