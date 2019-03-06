@@ -10,7 +10,7 @@ exports.resolver = {
       userLoader(info).load(creator.toString())
   },
   Query: {
-    events: async (_, args, ctx, info) => Event.find({}, infoToProjection(info))
+    events: (_, args, ctx, info) => Event.find({}, infoToProjection(info))
   },
   Mutation: {
     createEvent: async (_, { eventInput }, { userId }) => {
@@ -42,16 +42,10 @@ exports.resolver = {
         throw err;
       }
     },
-    async updateEvent(_, { input }, context) {
-      try {
-        return Event.findOneAndUpdate(
-          { _id: input._id, creator: context.userId },
-          input.event,
-          { new: true }
-        );
-      } catch (err) {
-        throw err;
-      }
-    }
+    updateEvent: (_, { input }, { userId }, info) =>
+      Event.findOneAndUpdate({ _id: input._id, creator: userId }, input.event, {
+        new: true,
+        projection: infoToProjection(info)
+      })
   }
 };

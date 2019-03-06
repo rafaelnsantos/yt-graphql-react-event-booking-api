@@ -1,33 +1,32 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import './EventItem.css';
 
-const eventItem = props => (
-  <li key={props.eventId} className="events__list-item">
-    <div>
-      <h1>{props.title}</h1>
-      <h2>
-        ${props.price} - {new Date(props.date).toLocaleDateString()}
-      </h2>
-    </div>
-    <div>
-      {props.userId === props.creatorId ? (
-        <button
-          className="btn"
-          onClick={props.onEdit.bind(this, props.eventId)}
-        >
-          Edit
-        </button>
-      ) : (
-        <button
-          className="btn"
-          onClick={props.onDetail.bind(this, props.eventId)}
-        >
-          View Details
-        </button>
-      )}
-    </div>
-  </li>
-);
+import { AuthContext } from '../../../../context';
+
+const eventItem = ({ event, onEdit, onDetail }) => {
+  const { userId } = useContext(AuthContext);
+  return (
+    <li key={event._id} className="events__list-item">
+      <div>
+        <h1>{event.title}</h1>
+        <h2>
+          ${event.price} - {new Date(event.date).toLocaleDateString()}
+        </h2>
+      </div>
+      <div>
+        {userId === event.creator._id ? (
+          <button className="btn" onClick={onEdit.bind(this, event._id)}>
+            Edit
+          </button>
+        ) : (
+          <button className="btn" onClick={onDetail.bind(this, event._id)}>
+            View Details
+          </button>
+        )}
+      </div>
+    </li>
+  );
+};
 
 export default eventItem;

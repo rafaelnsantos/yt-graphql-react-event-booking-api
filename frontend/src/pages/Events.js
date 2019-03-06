@@ -27,7 +27,7 @@ const EventsPage = props => {
 
   var isActive = true;
 
-  const { token, userId } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const { query } = useContext(GraphQLContext);
 
   useEffect(() => {
@@ -326,8 +326,7 @@ const EventsPage = props => {
       )}
       <EventList
         events={events}
-        authUserId={userId}
-        onViewDetail={showDetailHandler}
+        onDetail={showDetailHandler}
         onEdit={editHandler}
         isLoading={isLoading}
       />

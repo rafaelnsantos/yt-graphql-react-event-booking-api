@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../../models/user');
 const { eventLoader } = require('./dataloaders');
-const infoToProjection = require('../mongodb-projection');
 
 exports.resolver = {
   User: {

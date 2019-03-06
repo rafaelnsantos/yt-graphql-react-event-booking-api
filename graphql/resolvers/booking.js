@@ -24,10 +24,9 @@ exports.resolver = {
     },
     cancelBooking: async (_, { bookingId }, { userId }, info) => {
       try {
-        const booking = await Booking.findById(bookingId);
-        const event = booking.event;
+        const booking = await Booking.findOne({ _id: bookingId, user: userId });
         await Booking.deleteOne({ _id: bookingId, user: userId });
-        return Event.findOne({ _id: event }, infoToProjection(info));
+        return Event.findOne({ _id: booking.event }, infoToProjection(info));
       } catch (err) {
         throw err;
       }
