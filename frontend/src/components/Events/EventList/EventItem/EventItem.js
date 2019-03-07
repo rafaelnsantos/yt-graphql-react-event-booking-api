@@ -7,7 +7,7 @@ import { AuthContext } from '../../../../context';
 const eventItem = ({ event, onEdit, onDetail }) => {
   const { userId } = useContext(AuthContext);
   return (
-    <li key={event._id} className="events__list-item">
+    <li className="events__list-item">
       <div>
         <h1>{event.title}</h1>
         <h2>

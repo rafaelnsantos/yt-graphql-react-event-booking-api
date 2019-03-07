@@ -18,7 +18,7 @@ const BookingsPage = props => {
   const [error, setError] = useState();
 
   const { query } = useContext(GraphQLContext);
-  const { sendNotification } = useContext(NotificationContext);
+  const { sendNotification, sendError } = useContext(NotificationContext);
 
   useEffect(() => {
     fetchBookings();
@@ -46,7 +46,7 @@ const BookingsPage = props => {
       setBookings(bookings);
       setIsLoading(false);
     } catch (err) {
-      console.log(err);
+      sendError(err.message);
     } finally {
       setIsLoading(false);
     }

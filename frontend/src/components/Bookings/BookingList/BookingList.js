@@ -8,7 +8,7 @@ const bookingList = ({ bookings, onDelete, isLoading }) => (
   <Fragment isLoading={isLoading}>
     <ul className="bookings__list">
       {bookings.map(booking => (
-        <BookingItem booking={booking} onDelete={onDelete} />
+        <BookingItem key={booking._id} booking={booking} onDelete={onDelete} />
       ))}
     </ul>
   </Fragment>

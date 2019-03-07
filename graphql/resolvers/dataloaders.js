@@ -18,9 +18,12 @@ exports.userLoader = info => {
 exports.eventLoader = eventLoader = info => {
   info = infoToProjection(info);
   if (JSON.stringify(this.eventInfo) !== JSON.stringify(info)) {
-    this.eventLoader = new DataLoader(ids =>
-      Event.find({ _id: { $in: ids } }, info)
-    );
+    this.eventLoader = new DataLoader(async ids => {
+      const events = await Event.find({ _id: { $in: ids } }, info);
+      return events.sort(
+        (a, b) => ids.indexOf(a._id.toString()) - ids.indexOf(b._id.toString())
+      );
+    });
     this.eventInfo = info;
   }
   return this.eventLoader;

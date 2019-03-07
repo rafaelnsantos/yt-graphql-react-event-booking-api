@@ -105,7 +105,9 @@ const AuthPage = props => {
           )}
           <Error message={error} />
           <div className="form-actions">
-            <button id="submit">{isLogin ? 'Login' : 'Signup'}</button>
+            <button type="submit" id="submit">
+              {isLogin ? 'Login' : 'Signup'}
+            </button>
             <button type="button" onClick={switchModeHandler}>
               Switch to {isLogin ? 'Signup' : 'Login'}
             </button>

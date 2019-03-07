@@ -23,7 +23,7 @@ const EventsPage = props => {
   const [updating, setUpdating] = useState(null);
   const [isBooking, setIsBooking] = useState(false);
   const [error, setError] = useState();
-  const { sendNotification } = useContext(NotificationContext);
+  const { sendNotification, sendError } = useContext(NotificationContext);
 
   var isActive = true;
 
@@ -136,7 +136,7 @@ const EventsPage = props => {
         setEvents(events);
       }
     } catch (err) {
-      console.log(err);
+      sendError(err.message);
     } finally {
       if (isActive) {
         setIsLoading(false);

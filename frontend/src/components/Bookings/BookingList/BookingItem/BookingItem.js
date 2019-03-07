@@ -1,7 +1,7 @@
 import React from 'react';
 
 const BookingItem = ({ booking, onDelete }) => (
-  <li key={booking._id} className="bookings__item">
+  <li className="bookings__item">
     <div className="bookings__item-data">
       {booking.event.title} - {new Date(booking.createdAt).toLocaleDateString()}
     </div>

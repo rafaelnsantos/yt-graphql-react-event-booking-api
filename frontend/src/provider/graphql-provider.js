@@ -23,7 +23,6 @@ const GraphQLProvider = ({ url, children, history }) => {
       }
       return data;
     } catch (err) {
-      console.log(err.message === 'Unauthenticated');
       if (err.message === 'Unauthenticated') {
         logout();
         sendError('Token expired, please do login again');
