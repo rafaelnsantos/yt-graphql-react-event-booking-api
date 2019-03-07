@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import './Auth.css';
-import { AuthContext, GraphQLContext } from '../context';
+import { AuthContext, GraphQLContext, NotificationContext } from '../context';
 import { Formik } from 'formik';
 import { object, string } from 'yup';
 import { Input, Form } from '../components/Form';
@@ -12,6 +12,7 @@ const AuthPage = props => {
 
   const { login } = useContext(AuthContext);
   const { query } = useContext(GraphQLContext);
+  const { sendNotification } = useContext(NotificationContext);
 
   const switchModeHandler = () => {
     setIsLogin(!isLogin);
@@ -40,9 +41,15 @@ const AuthPage = props => {
 
     try {
       const data = await query(isLogin ? loginQuery : createMutation, values);
-      if (!isLogin) return;
-      const { token, userId, tokenExpiration } = data.login;
-      login(token, userId, tokenExpiration);
+      if (isLogin) {
+        const { token, userId, tokenExpiration } = data.login;
+        login(token, userId, tokenExpiration);
+        return;
+      }
+      const { email } = data.createUser;
+      sendNotification(`${email} registered successfully`);
+      values.password = '';
+      setIsLogin(true);
     } catch (err) {
       setError(err.message);
     } finally {
