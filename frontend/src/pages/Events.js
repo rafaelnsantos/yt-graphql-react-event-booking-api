@@ -43,38 +43,28 @@ const EventsPage = props => {
   };
 
   const modalConfirmHandler = async (values, { setSubmitting }) => {
-    const { title, price, date, description } = values;
-
-    const requestBody = {
-      query: `
-          mutation CreateEvent($title: String!, $desc: String!, $price: Float!, $date: DateTime!) {
-            createEvent(eventInput: {title: $title, description: $desc, price: $price, date: $date}) {
-              _id
-              title
-              description
-              date
-              price
-              creator {
-                _id
-              }
-            }
+    const createEventMutation = `
+      mutation ($title: String!, $description: String!, $price: Float!, $date: DateTime!) {
+        newEvent: createEvent(eventInput: {title: $title, description: $description, price: $price, date: $date}) {
+          _id
+          title
+          description
+          date
+          price
+          creator {
+            _id
           }
-        `,
-      variables: {
-        title: title,
-        desc: description,
-        price: price,
-        date: date
+        }
       }
-    };
+    `;
 
     try {
-      const data = await query(requestBody);
+      const { newEvent } = await query(createEventMutation, values);
       const updatedEvents = [...events];
-      updatedEvents.push(data.createEvent);
+      updatedEvents.push(newEvent);
       setEvents(updatedEvents);
       setCreating(false);
-      sendNotification(`Event ${data.createEvent.title} created`);
+      sendNotification(`Event ${newEvent.title} created`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -83,34 +73,26 @@ const EventsPage = props => {
   };
 
   const modalConfirmUpdateHandler = async (values, { setSubmitting }) => {
-    const { title, price, date, description } = values;
-
-    const requestBody = {
-      query: `
-        mutation UpdateEvent($_id: ID!, $title: String!, $desc: String!, $price: Float!, $date: DateTime!) {
-          updateEvent(input: {_id: $_id, event: {title: $title, description: $desc, price: $price, date: $date}}) {
-            _id
-            title
-            description
-            date
-            price
-          }
+    const updateEventMutation = `
+      mutation ($_id: ID!, $title: String!, $description: String!, $price: Float!, $date: DateTime!) {
+        event: updateEvent(input: {_id: $_id, event: {title: $title, description: $description, price: $price, date: $date}}) {
+          _id
+          title
+          description
+          date
+          price
         }
-      `,
-      variables: {
-        _id: updating._id,
-        title: title,
-        desc: description,
-        price: price,
-        date: date
       }
-    };
+    `;
     try {
-      const data = await query(requestBody);
-      const updatedEvents = updateInArray(events, data.updateEvent);
+      const { event } = await query(updateEventMutation, {
+        _id: updating._id,
+        ...values
+      });
+      const updatedEvents = updateInArray(events, event);
       setUpdating(null);
       setEvents(updatedEvents);
-      sendNotification(`Event ${data.updateEvent.title} updated`);
+      sendNotification(`Event ${event.title} updated`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -132,27 +114,24 @@ const EventsPage = props => {
 
   const fetchEvents = async () => {
     setIsLoading(true);
-    const requestBody = {
-      query: `
-          query {
-            events {
-              _id
-              title
-              description
-              date
-              price
-              creator {
-                _id
-                email
-              }
-            }
+    const eventsQuery = `
+      query {
+        events {
+          _id
+          title
+          description
+          date
+          price
+          creator {
+            _id
+            email
           }
-        `
-    };
+        }
+      }
+    `;
 
     try {
-      const data = await query(requestBody);
-      const events = data.events;
+      const { events } = await query(eventsQuery);
       if (isActive) {
         setEvents(events);
       }
@@ -173,24 +152,17 @@ const EventsPage = props => {
   const bookEventHandler = async () => {
     setIsBooking(true);
     console.log(selectedEvent);
-    const requestBody = {
-      query: `
-          mutation BookEvent($id: ID!) {
-            bookEvent(eventId: $id) {
-              _id
-             createdAt
-             updatedAt
-            }
-          }
-        `,
-      variables: {
-        id: selectedEvent._id
+    const bookEventMutation = `
+      mutation BookEvent($id: ID!) {
+        bookEvent(eventId: $id) {
+          _id
+          createdAt
+          updatedAt
+        }
       }
-    };
-
+    `;
     try {
-      const data = await query(requestBody);
-      console.log(data);
+      await query(bookEventMutation, { id: selectedEvent._id });
       sendNotification(`Event ${selectedEvent.title} booked`);
       setSelectedEvent(null);
     } catch (err) {

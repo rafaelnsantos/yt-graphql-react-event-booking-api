@@ -5,11 +5,11 @@ const GraphQLProvider = ({ url, children, history }) => {
   const { token, logout } = useContext(AuthContext);
   const { sendError } = useContext(NotificationContext);
 
-  const query = async request => {
+  const query = async (query, variables) => {
     try {
       const res = await fetch(url, {
         method: 'POST',
-        body: JSON.stringify(request),
+        body: JSON.stringify({ query: query, variables: variables }),
         headers: {
           'Content-Type': 'application/json',
           ...(token && { Authorization: 'Bearer ' + token })

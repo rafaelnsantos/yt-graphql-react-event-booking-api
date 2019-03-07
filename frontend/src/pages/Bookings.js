@@ -26,26 +26,23 @@ const BookingsPage = props => {
 
   const fetchBookings = async () => {
     setIsLoading(true);
-    const requestBody = {
-      query: `
-          query {
-            bookings {
-              _id
-             createdAt
-             event {
-               _id
-               title
-               date
-               price
-             }
-            }
+    const bookingsQuery = `
+      query {
+        bookings {
+          _id
+          createdAt
+          event {
+            _id
+            title
+            date
+            price
           }
-        `
-    };
+        }
+      }
+    `;
 
     try {
-      const data = await query(requestBody);
-      const bookings = data.bookings;
+      const { bookings } = await query(bookingsQuery);
       setBookings(bookings);
       setIsLoading(false);
     } catch (err) {
@@ -62,28 +59,25 @@ const BookingsPage = props => {
 
   const deleteBookingHandler = async () => {
     setIsCanceling(true);
-    const requestBody = {
-      query: `
-          mutation CancelBooking($id: ID!) {
-            cancelBooking(bookingId: $id) {
-            _id
-             title
-            }
-          }
-        `,
-      variables: {
-        id: selectedBooking._id
+    const cancelBookingMutation = `
+      mutation ($id: ID!) {
+        event: cancelBooking(bookingId: $id) {
+        _id
+          title
+        }
       }
-    };
+    `;
 
     try {
-      const data = await query(requestBody);
+      const { event } = await query(cancelBookingMutation, {
+        id: selectedBooking._id
+      });
       const updatedBookings = removeFromArrayById(
         bookings,
         selectedBooking._id
       );
       setBookings(updatedBookings);
-      sendNotification(`Booking ${data.cancelBooking.title} canceled`);
+      sendNotification(`Booking ${event.title} canceled`);
       setSelectedBooking(null);
     } catch (err) {
       setError(err.message);

@@ -20,40 +20,26 @@ const AuthPage = props => {
 
   const submitHandler = async (values, { setSubmitting }) => {
     setError();
-    let requestBody = {
-      query: `
-        query Login($email: Email!, $password: String!) {
-          login(email: $email, password: $password) {
-            userId
-            token
-            tokenExpiration
-          }
+    const loginQuery = `
+      query ($email: Email!, $password: String!) {
+        login(email: $email, password: $password) {
+          userId
+          token
+          tokenExpiration
         }
-      `,
-      variables: {
-        email: values.email,
-        password: values.password
       }
-    };
-
-    if (!isLogin) {
-      requestBody = {
-        query: `
-          mutation CreateUser($email: Email!, $password: String!) {
-            createUser(userInput: {email: $email, password: $password}) {
-              _id
-              email
-            }
-          }
-        `,
-        variables: {
-          email: values.email,
-          password: values.password
+    `;
+    const createMutation = `
+      mutation ($email: Email!, $password: String!) {
+        createUser(userInput: {email: $email, password: $password}) {
+          _id
+          email
         }
-      };
-    }
+      }
+    `;
+
     try {
-      const data = await query(requestBody);
+      const data = await query(isLogin ? loginQuery : createMutation, values);
       if (!isLogin) return;
       const { token, userId, tokenExpiration } = data.login;
       login(token, userId, tokenExpiration);
@@ -91,6 +77,7 @@ const AuthPage = props => {
       {formikProps => (
         <Form className="auth-form" isLoading={formikProps.isSubmitting}>
           <Input
+            id="email"
             formikKey="email"
             label="Email"
             formikProps={formikProps}
@@ -98,6 +85,7 @@ const AuthPage = props => {
             type="email"
           />
           <Input
+            id="password"
             formikKey="password"
             label="Password"
             placeholder="Password"
@@ -107,6 +95,7 @@ const AuthPage = props => {
           />
           {!isLogin && (
             <Input
+              id="confirm-password"
               formikKey="confirmPassword"
               formikProps={formikProps}
               label="Confirm Password"
@@ -116,7 +105,7 @@ const AuthPage = props => {
           )}
           <Error message={error} />
           <div className="form-actions">
-            <button>{isLogin ? 'Login' : 'Signup'}</button>
+            <button id="submit">{isLogin ? 'Login' : 'Signup'}</button>
             <button type="button" onClick={switchModeHandler}>
               Switch to {isLogin ? 'Signup' : 'Login'}
             </button>
