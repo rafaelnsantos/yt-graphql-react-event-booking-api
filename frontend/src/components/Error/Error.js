@@ -2,7 +2,11 @@ import React from 'react';
 import './Error.css';
 const Error = ({ message }) => (
   <React.Fragment>
-    {message && <div className="error-msg">{message}</div>}
+    {message && (
+      <div className="error-msg" id="error">
+        {message}
+      </div>
+    )}
   </React.Fragment>
 );
 
