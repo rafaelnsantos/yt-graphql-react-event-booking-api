@@ -168,7 +168,10 @@ const EventsPage = props => {
     `;
 
     try {
-      const { events } = await query({ query: eventsQuery });
+      const { events } = await query({
+        query: eventsQuery,
+        fetchPolicy: 'no-cache'
+      });
       if (isActive) {
         setEvents(events);
       }

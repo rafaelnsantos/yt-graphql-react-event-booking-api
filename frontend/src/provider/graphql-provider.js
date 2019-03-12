@@ -19,26 +19,20 @@ const GraphQLProvider = ({ children, history, client }) => {
     throw err;
   };
 
-  const query = async ({ query, variables, ...rest }) => {
+  const query = async options => {
     try {
-      const { data } = await client.query({
-        query: gql(query),
-        variables,
-        ...rest
-      });
+      options.query = gql(options.query);
+      const { data } = await client.query(options);
       return data;
     } catch (err) {
       Error(err);
     }
   };
 
-  const mutate = async ({ mutation, variables, ...rest }) => {
+  const mutate = async options => {
     try {
-      const { data } = await client.mutate({
-        mutation: gql(mutation),
-        variables,
-        ...rest
-      });
+      options.mutation = gql(options.mutation);
+      const { data } = await client.mutate(options);
       return data;
     } catch (err) {
       Error(err);

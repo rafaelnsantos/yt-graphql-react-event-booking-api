@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default React.createContext({
-  query: ({ query, variables }) => {},
-  mutate: ({ mutation, variables }) => {},
+  query: options => {},
+  mutate: options => {},
   subscribe: ({ subscription, callback }) => {}
 });
