@@ -62,3 +62,7 @@ type Mutation {
   bookEvent(eventId: ID!): Booking! @isAuth
   cancelBooking(bookingId: ID!): Event! @isAuth
 }
+
+type Subscription {
+  newEvent: Event!
+}

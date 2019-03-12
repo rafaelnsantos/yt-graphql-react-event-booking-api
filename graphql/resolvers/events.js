@@ -13,7 +13,7 @@ exports.resolver = {
     events: (_, args, ctx, info) => Event.find({}, infoToProjection(info))
   },
   Mutation: {
-    createEvent: async (_, { eventInput }, { userId }) => {
+    createEvent: async (_, { eventInput }, { userId, pubsub }) => {
       const { title, description, price, date } = eventInput;
 
       const event = new Event({
@@ -37,6 +37,7 @@ exports.resolver = {
         creator.createdEvents.push(event);
         await creator.save();
 
+        pubsub.publish('NEW_EVENT', { newEvent: createdEvent });
         return createdEvent;
       } catch (err) {
         throw err;
@@ -47,5 +48,10 @@ exports.resolver = {
         new: true,
         projection: infoToProjection(info)
       })
+  },
+  Subscription: {
+    newEvent: {
+      subscribe: (_, args, { pubsub }) => pubsub.asyncIterator('NEW_EVENT')
+    }
   }
 };

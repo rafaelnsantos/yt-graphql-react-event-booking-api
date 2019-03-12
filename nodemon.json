@@ -3,6 +3,9 @@
     "ext": "js, graphql",
     "env": {
         "MONGO_URI": "mongodb://test:test123@ds113179.mlab.com:13179/events",
+        "REDIS_PASSWORD": "",
+        "REDIS_HOST": "localhost",
+        "REDIS_PORT": 6379,
         "DEBUG": "graphql:* server:* middleware:*"
     }
 }
