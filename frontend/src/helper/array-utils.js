@@ -7,3 +7,9 @@ export const findInArrayById = (array, id) =>
 
 export const removeFromArrayById = (array, id) =>
   array.filter(object => object._id !== id);
+
+export const addInArray = (array, added) => {
+  const list = [...array];
+  list.push(added);
+  return list;
+};

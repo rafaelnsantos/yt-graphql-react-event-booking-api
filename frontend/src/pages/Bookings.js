@@ -17,7 +17,7 @@ const BookingsPage = props => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [error, setError] = useState();
 
-  const { query } = useContext(GraphQLContext);
+  const { query, mutate } = useContext(GraphQLContext);
   const { sendNotification, sendError } = useContext(NotificationContext);
 
   useEffect(() => {
@@ -42,7 +42,10 @@ const BookingsPage = props => {
     `;
 
     try {
-      const { bookings } = await query(bookingsQuery);
+      const { bookings } = await query({
+        query: bookingsQuery,
+        fetchPolicy: 'no-cache'
+      });
       setBookings(bookings);
       setIsLoading(false);
     } catch (err) {
@@ -69,8 +72,11 @@ const BookingsPage = props => {
     `;
 
     try {
-      const { event } = await query(cancelBookingMutation, {
-        id: selectedBooking._id
+      const { event } = await mutate({
+        mutation: cancelBookingMutation,
+        variables: {
+          id: selectedBooking._id
+        }
       });
       const updatedBookings = removeFromArrayById(
         bookings,

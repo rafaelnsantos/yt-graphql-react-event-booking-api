@@ -6,7 +6,11 @@ import './Events.css';
 import { Formik } from 'formik';
 import { object, string, number } from 'yup';
 import { Input, TextArea, Action, Form } from '../components/Form';
-import { updateInArray, findInArrayById } from '../helper/array-utils';
+import {
+  updateInArray,
+  findInArrayById,
+  addInArray
+} from '../helper/array-utils';
 
 const validationEvent = object().shape({
   title: string().required(),
@@ -27,8 +31,37 @@ const EventsPage = props => {
 
   var isActive = true;
 
-  const { token } = useContext(AuthContext);
-  const { query } = useContext(GraphQLContext);
+  const { token, userId } = useContext(AuthContext);
+  const { query, mutate, subscribe } = useContext(GraphQLContext);
+
+  subscribe({
+    subscription: `
+        subscription {
+          newEvent {
+            _id
+            title
+            description
+            price
+            date
+            creator {
+              _id
+            }
+          }
+        }
+      `,
+    callback: {
+      next({ data }) {
+        const { newEvent } = data;
+        if (userId === newEvent.creator._id) return;
+        setEvents(addInArray(events, newEvent));
+        // TODO: fix: this is sendind multiple notifications
+        // sendNotification(`Event ${newEvent.title} added`);
+      },
+      error(value) {
+        sendError(value);
+      }
+    }
+  });
 
   useEffect(() => {
     fetchEvents();
@@ -59,10 +92,11 @@ const EventsPage = props => {
     `;
 
     try {
-      const { newEvent } = await query(createEventMutation, values);
-      const updatedEvents = [...events];
-      updatedEvents.push(newEvent);
-      setEvents(updatedEvents);
+      const { newEvent } = await mutate({
+        mutation: createEventMutation,
+        variables: values
+      });
+      setEvents(addInArray(events, newEvent));
       setCreating(false);
       sendNotification(`Event ${newEvent.title} created`);
     } catch (err) {
@@ -85,9 +119,12 @@ const EventsPage = props => {
       }
     `;
     try {
-      const { event } = await query(updateEventMutation, {
-        _id: updating._id,
-        ...values
+      const { event } = await mutate({
+        mutation: updateEventMutation,
+        variables: {
+          _id: updating._id,
+          ...values
+        }
       });
       const updatedEvents = updateInArray(events, event);
       setUpdating(null);
@@ -131,7 +168,7 @@ const EventsPage = props => {
     `;
 
     try {
-      const { events } = await query(eventsQuery);
+      const { events } = await query({ query: eventsQuery });
       if (isActive) {
         setEvents(events);
       }
@@ -162,7 +199,10 @@ const EventsPage = props => {
       }
     `;
     try {
-      await query(bookEventMutation, { id: selectedEvent._id });
+      await mutate({
+        mutation: bookEventMutation,
+        variables: { id: selectedEvent._id }
+      });
       sendNotification(`Event ${selectedEvent.title} booked`);
       setSelectedEvent(null);
     } catch (err) {

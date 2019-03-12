@@ -11,7 +11,7 @@ const AuthPage = props => {
   const [error, setError] = useState();
 
   const { login } = useContext(AuthContext);
-  const { query } = useContext(GraphQLContext);
+  const { query, mutate } = useContext(GraphQLContext);
   const { sendNotification } = useContext(NotificationContext);
 
   const switchModeHandler = () => {
@@ -40,16 +40,20 @@ const AuthPage = props => {
     `;
 
     try {
-      const data = await query(isLogin ? loginQuery : createMutation, values);
       if (isLogin) {
+        const data = await query({ query: loginQuery, variables: values });
         const { token, userId, tokenExpiration } = data.login;
         login(token, userId, tokenExpiration);
-        return;
+      } else {
+        const data = await mutate({
+          mutation: createMutation,
+          variables: values
+        });
+        const { email } = data.createUser;
+        sendNotification(`${email} registered successfully`);
+        values.password = '';
+        setIsLogin(true);
       }
-      const { email } = data.createUser;
-      sendNotification(`${email} registered successfully`);
-      values.password = '';
-      setIsLogin(true);
     } catch (err) {
       setError(err.message);
     } finally {
