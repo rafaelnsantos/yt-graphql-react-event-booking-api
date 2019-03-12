@@ -1,20 +1,21 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const graphqlHttp = require('express-graphql');
+const { ApolloServer } = require('apollo-server-express');
 const mongoose = require('mongoose');
+const { createServer } = require('http');
 
 const graphQLSchema = require('./schema');
 const auth = require('./middleware/auth');
-
-const app = express();
-
 const debug = require('debug');
+
+const PORT = process.env.PORT || 8000;
+const app = express();
 
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
@@ -22,26 +23,29 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(auth);
-
-app.use(
-  '/graphql',
-  graphqlHttp({
-    schema: graphQLSchema,
-    graphiql: true,
-    formatError(err) {
-      debug('graphql:error')(err);
-      return err;
-    }
+const server = new ApolloServer({
+  schema: graphQLSchema,
+  formatError(err) {
+    debug('graphql:error')(err);
+    return err;
+  },
+  context: ({ req }) => ({
+    userId: auth(req.headers.authorization)
   })
-);
+});
+
+server.applyMiddleware({ app });
+
+const httpServer = createServer(app);
 
 mongoose
   .connect(`${process.env.MONGO_URI}?retryWrites=true`, {
     useNewUrlParser: true
   })
   .then(() => {
-    app.listen(8000, () => debug('server:info')('listening on port 8000'));
+    httpServer.listen(PORT, () =>
+      debug('server:info')(`listening on port ${PORT}`)
+    );
   })
   .catch(err => {
     debug('server:error')(err);

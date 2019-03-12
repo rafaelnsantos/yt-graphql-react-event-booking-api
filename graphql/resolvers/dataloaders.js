@@ -5,26 +5,22 @@ const User = require('../../models/user');
 const infoToProjection = require('../mongodb-projection');
 
 exports.userLoader = info => {
-  info = infoToProjection(info);
-  if (JSON.stringify(this.userInfo) !== JSON.stringify(info)) {
-    this.userLoader = new DataLoader(ids =>
-      User.find({ _id: { $in: ids } }, info)
-    );
-    this.userInfo = info;
-  }
-  return this.userLoader;
+  return Loader('user', User, info);
 };
 
 exports.eventLoader = eventLoader = info => {
+  return Loader('event', Event, info);
+};
+
+const Loader = (name, Model, info) => {
   info = infoToProjection(info);
-  if (JSON.stringify(this.eventInfo) !== JSON.stringify(info)) {
-    this.eventLoader = new DataLoader(async ids => {
-      const events = await Event.find({ _id: { $in: ids } }, info);
-      return events.sort(
+  if (JSON.stringify(this[`${name}Info`]) !== JSON.stringify(info)) {
+    this[`${name}Loader`] = new DataLoader(async ids =>
+      (await Model.find({ _id: { $in: ids } }, info)).sort(
         (a, b) => ids.indexOf(a._id.toString()) - ids.indexOf(b._id.toString())
-      );
-    });
-    this.eventInfo = info;
+      )
+    );
+    this[`${name}Info`] = info;
   }
-  return this.eventLoader;
+  return this[`${name}Loader`];
 };

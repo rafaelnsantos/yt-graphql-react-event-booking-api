@@ -1,24 +1,23 @@
 const jwt = require('jsonwebtoken');
 const debug = require('debug')('middleware:auth');
-module.exports = (req, res, next) => {
-  const authHeader = req.get('Authorization');
+
+module.exports = authHeader => {
   if (!authHeader) {
-    return next();
+    return null;
   }
   const token = authHeader.split(' ')[1];
   if (!token || token === '') {
-    return next();
+    return null;
   }
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, 'somesupersecretkey');
   } catch (err) {
     debug(err);
-    return next();
+    return null;
   }
   if (!decodedToken) {
-    return next();
+    return null;
   }
-  req.userId = decodedToken.userId;
-  next();
+  return decodedToken.userId;
 };
