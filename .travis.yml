@@ -10,10 +10,15 @@ services:
   - redis-server
 
 install:
-  - npm install
   - cd frontend && npm install
 
 script:
-  - npm start
-  - cd frontend && npm start
-  - cd frontend && npm test
+  - cd frontend && npm build
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: frontend/build
+  on:
+    branch: 42-cloud
