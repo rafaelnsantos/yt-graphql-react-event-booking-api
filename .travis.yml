@@ -14,12 +14,8 @@ before_install: cd frontend
 install:
   - npm install
 
-before_script: cd frontend
-
 script:
   - npm build
-
-before_deploy: cd frontend
 
 deploy:
   provider: pages
