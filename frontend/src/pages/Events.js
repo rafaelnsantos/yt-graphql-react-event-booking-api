@@ -34,7 +34,7 @@ const EventsPage = props => {
   const { token, userId } = useContext(AuthContext);
   const { query, mutate, subscribe } = useContext(GraphQLContext);
 
-  subscribe({
+  let s1 = subscribe({
     subscription: `
       subscription {
         newEvent {
@@ -61,7 +61,7 @@ const EventsPage = props => {
     }
   });
 
-  subscribe({
+  let s2 = subscribe({
     subscription: `
       subscription {
         updatedEvent {
@@ -75,7 +75,10 @@ const EventsPage = props => {
     `,
     callback: {
       next({ data }) {
-        setEvents(updateInArray(events, data.updatedEvent));
+        const updatedEvent = findInArrayById(events, data.updatedEvent._id);
+        if (!updatedEvent) return;
+        if (updatedEvent && updatedEvent.creator._id !== userId)
+          setEvents(updateInArray(events, data.updatedEvent));
       },
       error(value) {
         sendError(value);
@@ -87,6 +90,8 @@ const EventsPage = props => {
     fetchEvents();
     return () => {
       isActive = false;
+      s1.unsubscribe();
+      s2.unsubscribe();
     };
   }, []);
 

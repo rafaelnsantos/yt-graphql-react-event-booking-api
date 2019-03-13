@@ -39,7 +39,7 @@ const GraphQLProvider = ({ children, history, client }) => {
     }
   };
 
-  const subscribe = async ({ subscription, callback }) => {
+  const subscribe = ({ subscription, callback }) => {
     return client
       .subscribe({
         query: gql(subscription)

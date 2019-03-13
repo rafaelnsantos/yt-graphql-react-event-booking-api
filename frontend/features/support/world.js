@@ -4,7 +4,7 @@ const { setWorldConstructor, setDefaultTimeout } = require('cucumber');
 
 const chromeCapabilities = Capabilities.chrome();
 chromeCapabilities.set('chromeOptions', {
-  args: ['--headless', '--disable-gpu']
+  args: ['--headless', '--disable-gpu', '--start-maximized']
 });
 
 function Init() {
