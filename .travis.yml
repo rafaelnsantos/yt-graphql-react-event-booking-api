@@ -9,16 +9,22 @@ services:
   - mongodb
   - redis-server
 
+before_install: cd frontend
+
 install:
-  - cd frontend && npm install
+  - npm install
+
+before_script: cd frontend
 
 script:
-  - cd frontend && npm build
+  - npm build
+
+before_deploy: cd frontend
 
 deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
-  local_dir: frontend/build
+  local_dir: build
   on:
     branch: 42-cloud
