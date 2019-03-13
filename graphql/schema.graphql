@@ -65,4 +65,5 @@ type Mutation {
 
 type Subscription {
   newEvent: Event!
+  updatedEvent: Event!
 }

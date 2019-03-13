@@ -43,15 +43,25 @@ exports.resolver = {
         throw err;
       }
     },
-    updateEvent: (_, { input }, { userId }, info) =>
-      Event.findOneAndUpdate({ _id: input._id, creator: userId }, input.event, {
-        new: true,
-        projection: infoToProjection(info)
-      })
+    updateEvent: async (_, { input }, { userId, pubsub }, info) => {
+      const event = await Event.findOneAndUpdate(
+        { _id: input._id, creator: userId },
+        input.event,
+        {
+          new: true,
+          projection: infoToProjection(info)
+        }
+      );
+      pubsub.publish('UPDATE_EVENT', { updatedEvent: event });
+      return event;
+    }
   },
   Subscription: {
     newEvent: {
       subscribe: (_, args, { pubsub }) => pubsub.asyncIterator('NEW_EVENT')
+    },
+    updatedEvent: {
+      subscribe: (_, args, { pubsub }) => pubsub.asyncIterator('UPDATE_EVENT')
     }
   }
 };

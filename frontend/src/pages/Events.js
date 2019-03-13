@@ -36,26 +36,46 @@ const EventsPage = props => {
 
   subscribe({
     subscription: `
-        subscription {
-          newEvent {
+      subscription {
+        newEvent {
+          _id
+          title
+          description
+          price
+          date
+          creator {
             _id
-            title
-            description
-            price
-            date
-            creator {
-              _id
-            }
           }
         }
-      `,
+      }
+    `,
     callback: {
       next({ data }) {
         const { newEvent } = data;
-        if (userId === newEvent.creator._id) return;
-        setEvents(addInArray(events, newEvent));
-        // TODO: fix: this is sendind multiple notifications
-        // sendNotification(`Event ${newEvent.title} added`);
+        if (userId !== newEvent.creator._id)
+          setEvents(addInArray(events, newEvent));
+      },
+      error(value) {
+        sendError(value);
+      }
+    }
+  });
+
+  subscribe({
+    subscription: `
+      subscription {
+        updatedEvent {
+          _id
+          title
+          description
+          price
+          date
+        }
+      }
+    `,
+    callback: {
+      next({ data }) {
+        setEvents(updateInArray(events, data.updatedEvent));
       },
       error(value) {
         sendError(value);
