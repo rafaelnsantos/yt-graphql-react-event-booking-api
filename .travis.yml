@@ -10,6 +10,8 @@ services:
   - redis-server
 
 script:
+  - npm install
+  - cd frontend && npm install
   - npm start
   - cd frontend && npm start
   - cd frontend && npm test
