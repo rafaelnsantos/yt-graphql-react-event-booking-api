@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "stable"
+  - "8.10.0"
 cache:
   directories:
   - node_modules
@@ -9,9 +9,11 @@ services:
   - mongodb
   - redis-server
 
-script:
+install:
   - npm install
   - cd frontend && npm install
+
+script:
   - npm start
   - cd frontend && npm start
   - cd frontend && npm test
