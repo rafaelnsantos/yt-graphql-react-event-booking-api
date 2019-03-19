@@ -12,11 +12,10 @@
   box-sizing: border-box;
 }
 
-.main-navigation__logo h1 {
-  margin: 0;
+.main-navigation__logo {
+  margin-left: 0.5rem;
   font-size: 1.5rem;
-  color: #dfcefc;
-}
+  color: #dfcefc;}
 
 .main-navigation__items {
   margin-left: 1.5rem;
@@ -56,3 +55,16 @@
   color: #5101d1;
   border-radius: 5px;
 }
+
+@media (max-width: 768px) {
+  .main-navigation__items {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .main-navigation__toggle-button {
+    display: none;
+  }
+}
+

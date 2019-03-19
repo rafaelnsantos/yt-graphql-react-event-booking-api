@@ -5,7 +5,7 @@ import { Fragment } from '../';
 import { Action } from '../Form';
 const modal = ({ title, children, isLoading, ...rest }) => (
   <React.Fragment>
-    <Backdrop />
+    <Backdrop click={rest.onCancel} />
     <div className="modal">
       <header className="modal__header">
         <h1>{title}</h1>

@@ -1,41 +1,35 @@
-import React, { useContext } from 'react';
-import { NavLink } from 'react-router-dom';
-
-import AuthContext from '../../context/auth-context';
+import React, { useState } from 'react';
+import Menu from './Menu';
+import SideDrawer from './SideDrawer/SideDrawer';
 import './MainNavigation.css';
+import DrawerToggleButton from './SideDrawer/DrawerToggleButton';
 
 const mainNavigation = props => {
-  const { token, logout } = useContext(AuthContext);
+  const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
+
+  const backdropClickHandler = () => {
+    setSideDrawerOpen(false);
+  };
+
+  const drawerToggleClickHandler = () => {
+    setSideDrawerOpen(!sideDrawerOpen);
+  };
+
   return (
-    <header className="main-navigation">
-      <div className="main-navigation__logo">
-        <h1>EasyEvent</h1>
-      </div>
-      <nav className="main-navigation__items">
-        <ul>
-          {!token && (
-            <li>
-              <NavLink to="/auth">Authenticate</NavLink>
-            </li>
-          )}
-          <li>
-            <NavLink to="/events">Events</NavLink>
-          </li>
-          {token && (
-            <React.Fragment>
-              <li>
-                <NavLink to="/bookings">Bookings</NavLink>
-              </li>
-              <li>
-                <button id="logout" onClick={logout}>
-                  Logout
-                </button>
-              </li>
-            </React.Fragment>
-          )}
-        </ul>
-      </nav>
-    </header>
+    <React.Fragment>
+      <header className="main-navigation">
+        <div className="main-navigation__toggle-button">
+          <DrawerToggleButton click={drawerToggleClickHandler} />
+        </div>
+        <div className="main-navigation__logo">EasyEvent</div>
+        {!sideDrawerOpen && (
+          <nav className="main-navigation__items">
+            <Menu />
+          </nav>
+        )}
+      </header>
+      <SideDrawer backdropClick={backdropClickHandler} show={sideDrawerOpen} />
+    </React.Fragment>
   );
 };
 
