@@ -4,58 +4,20 @@ import Routes from './Routes';
 import {
   AuthProvider,
   GraphQLProvider,
-  NotificationProvider
+  NotificationProvider,
+  ApolloProvider
 } from './provider';
 import { MainNavigation, Notification } from './components';
 import './App.css';
-
-import { ApolloClient } from 'apollo-client';
-import { split } from 'apollo-link';
-import { HttpLink } from 'apollo-link-http';
-import { WebSocketLink } from 'apollo-link-ws';
-import { getMainDefinition } from 'apollo-utilities';
-import { setContext } from 'apollo-link-context';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloProvider } from 'react-apollo';
-
-const httpLink = new HttpLink({
-  uri: 'https://yt-bookingapi.herokuapp.com/graphql'
-});
-const wsLink = new WebSocketLink({
-  uri: 'wss://yt-bookingapi.herokuapp.com/graphql',
-  options: {
-    reconnect: true
-  }
-});
-const link = split(
-  ({ query }) => {
-    const { kind, operation } = getMainDefinition(query);
-    return kind === 'OperationDefinition' && operation === 'subscription';
-  },
-  wsLink,
-  httpLink
-);
-
-const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('token');
-  // return the headers to the context so httpLink can read them
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : ''
-    }
-  };
-});
-const cache = new InMemoryCache();
-const client = new ApolloClient({ link: authLink.concat(link), cache });
-
 const App = props => {
   return (
     <BrowserRouter>
-      <ApolloProvider client={client}>
-        <NotificationProvider>
-          <AuthProvider>
+      <NotificationProvider>
+        <AuthProvider>
+          <ApolloProvider
+            httpUri="https://yt-bookingapi.herokuapp.com/graphql"
+            wsUri="wss://yt-bookingapi.herokuapp.com/graphql"
+          >
             <GraphQLProvider>
               <MainNavigation />
               <main className="main-content">
@@ -63,9 +25,9 @@ const App = props => {
               </main>
               <Notification />
             </GraphQLProvider>
-          </AuthProvider>
-        </NotificationProvider>
-      </ApolloProvider>
+          </ApolloProvider>
+        </AuthProvider>
+      </NotificationProvider>
     </BrowserRouter>
   );
 };

@@ -13,12 +13,7 @@ exports.resolver = {
     createUser: async (_, { userInput }) => {
       const { email, password } = userInput;
       try {
-        const existingUser = await User.findOne(
-          {
-            email: email
-          },
-          { _id: 1 }
-        );
+        const existingUser = await User.findOne({ email: email }, { _id: 1 });
         if (existingUser) {
           throw new Error('User exists already.');
         }
