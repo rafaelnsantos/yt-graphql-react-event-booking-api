@@ -4,6 +4,7 @@ node_js:
 cache:
   directories:
   - node_modules
+  - frontend/node_modules
 
 services:
   - mongodb
@@ -23,4 +24,4 @@ deploy:
   github_token: $GITHUB_TOKEN
   local_dir: frontend/build
   on:
-    branch: 42-cloud
+    branch: 43-responsive-menu
