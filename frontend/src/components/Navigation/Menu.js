@@ -2,14 +2,15 @@ import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import AuthContext from '../../context/auth-context';
 
-const LiNavLink = ({ children, to }) => (
-  <li>
-    <NavLink to={to}>{children}</NavLink>
-  </li>
-);
-
-const Menu = props => {
+const Menu = ({ close }) => {
   const { token, logout } = useContext(AuthContext);
+
+  const LiNavLink = ({ children, to }) => (
+    <li onClick={close}>
+      <NavLink to={to}>{children}</NavLink>
+    </li>
+  );
+
   return (
     <ul>
       {!token && <LiNavLink to="/auth">Authenticate</LiNavLink>}
@@ -17,7 +18,7 @@ const Menu = props => {
       {token && (
         <React.Fragment>
           <LiNavLink to="/bookings">Bookings</LiNavLink>
-          <li>
+          <li onClick={close}>
             <button id="logout" onClick={logout}>
               Logout
             </button>

@@ -7,7 +7,7 @@ const sideDrawer = ({ backdropClick, show }) => (
   <React.Fragment>
     {show && <Backdrop click={backdropClick} />}
     <nav className={show ? 'side-drawer open' : 'side-drawer'}>
-      <Menu />
+      <Menu close={backdropClick} />
     </nav>
   </React.Fragment>
 );
