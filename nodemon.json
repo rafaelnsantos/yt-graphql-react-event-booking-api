@@ -2,6 +2,7 @@
     "ignore": ["./frontend"],
     "ext": "js, graphql",
     "env": {
+        "JWT_SECRET": "somesupersecretkey",
         "MONGO_URI": "mongodb://test:test123@ds113179.mlab.com:13179/events",
         "REDIS_PASSWORD": "",
         "REDIS_HOST": "localhost",

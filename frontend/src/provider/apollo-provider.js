@@ -9,13 +9,13 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from 'react-apollo';
 import { AuthContext } from '../context';
 
-const apolloProvider = ({ httpUri, wsUri, children }) => {
+const apolloProvider = ({ children }) => {
   const { token } = useContext(AuthContext);
   const httpLink = new HttpLink({
-    uri: httpUri
+    uri: process.env.REACT_APP_GRAPHQL
   });
   const wsLink = new WebSocketLink({
-    uri: wsUri,
+    uri: process.env.REACT_APP_SUBSCRIPTION,
     options: {
       reconnect: true
     }

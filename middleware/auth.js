@@ -11,7 +11,7 @@ module.exports = authHeader => {
   }
   let decodedToken;
   try {
-    decodedToken = jwt.verify(token, 'somesupersecretkey');
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
     debug(err);
     return null;

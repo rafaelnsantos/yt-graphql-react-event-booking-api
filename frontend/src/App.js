@@ -14,10 +14,7 @@ const App = props => {
     <BrowserRouter>
       <NotificationProvider>
         <AuthProvider>
-          <ApolloProvider
-            httpUri="https://yt-bookingapi.herokuapp.com/graphql"
-            wsUri="wss://yt-bookingapi.herokuapp.com/graphql"
-          >
+          <ApolloProvider>
             <GraphQLProvider>
               <MainNavigation />
               <main className="main-content">
