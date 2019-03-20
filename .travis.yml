@@ -17,6 +17,7 @@ script:
   - npm test
 
 before_deploy: 
+  - rm -rf node_modules
   - cd frontend && npm install
   - npm run build
 
