@@ -16,8 +16,10 @@ install:
 script:
   - npm test
 
-before_deploy: 
+after_script:
   - cd frontend
+
+before_deploy: 
   - npm install
   - npm run build
 
