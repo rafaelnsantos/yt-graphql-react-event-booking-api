@@ -8,9 +8,7 @@ const pubsub = require('./pubsub');
 
 const User = require('./models/user');
 
-const PORT = process.env.PORT || 5000;
-
-beforeAll(() => app.listen(PORT));
+beforeAll(() => app.listen());
 
 beforeEach(() => User.create({ email: 'test@test.com', password: 'test' }));
 
