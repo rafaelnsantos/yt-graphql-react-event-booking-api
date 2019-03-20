@@ -3,6 +3,7 @@ const User = require('../../models/user');
 
 const { userLoader } = require('./dataloaders');
 const infoToProjection = require('../mongodb-projection');
+const { NEW_EVENT, UPDATED_EVENT } = require('../subscriptions/channels');
 
 exports.resolver = {
   Event: {
@@ -37,7 +38,7 @@ exports.resolver = {
         creator.createdEvents.push(event);
         await creator.save();
 
-        pubsub.publish('NEW_EVENT', { newEvent: createdEvent });
+        pubsub.publish(NEW_EVENT, { newEvent: createdEvent });
         return createdEvent;
       } catch (err) {
         throw err;
@@ -52,16 +53,8 @@ exports.resolver = {
           projection: infoToProjection(info)
         }
       );
-      pubsub.publish('UPDATE_EVENT', { updatedEvent: event });
+      pubsub.publish(UPDATED_EVENT, { updatedEvent: event });
       return event;
-    }
-  },
-  Subscription: {
-    newEvent: {
-      subscribe: (_, args, { pubsub }) => pubsub.asyncIterator('NEW_EVENT')
-    },
-    updatedEvent: {
-      subscribe: (_, args, { pubsub }) => pubsub.asyncIterator('UPDATE_EVENT')
     }
   }
 };
