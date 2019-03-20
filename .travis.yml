@@ -18,7 +18,7 @@ script:
 
 before_deploy: 
   - cd frontend && npm install
-  - cd frontend && npm run build
+  - npm run build
 
 deploy:
   provider: pages
