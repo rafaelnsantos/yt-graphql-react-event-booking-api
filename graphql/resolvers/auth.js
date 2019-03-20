@@ -17,11 +17,9 @@ exports.resolver = {
         if (existingUser) {
           throw new Error('User exists already.');
         }
-        const hashedPassword = await bcrypt.hash(password, 12);
-
         const user = new User({
           email: email,
-          password: hashedPassword
+          password: password
         });
 
         return user.save();
@@ -43,9 +41,7 @@ exports.resolver = {
       const token = jwt.sign(
         { userId: user.id, email: user.email },
         'somesupersecretkey',
-        {
-          expiresIn: '1h'
-        }
+        { expiresIn: '1h' }
       );
       return { userId: user.id, token: token, tokenExpiration: 1 };
     }

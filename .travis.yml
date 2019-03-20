@@ -10,12 +10,15 @@ services:
   - mongodb
   - redis-server
 
-before_install: cd frontend
-
 install:
   - npm install
 
 script:
+  - npm test
+
+before_deploy: 
+  - cd frontend
+  - npm install
   - npm run build
 
 deploy:
@@ -24,4 +27,4 @@ deploy:
   github_token: $GITHUB_TOKEN
   local_dir: frontend/build
   on:
-    branch: 43-responsive-menu
+    branch: 44-test-api
