@@ -12,13 +12,19 @@ services:
 
 install:
   - npm install
+  - cd frontend
+  - npm install
+  - cd ..
 
 script:
   - npm test
+  - cd frontend
+  - npm test
+  - cd ..
 
 before_deploy: 
   - rm -rf node_modules
-  - cd frontend && npm install
+  - cd frontend 
   - npm run build
 
 deploy:
