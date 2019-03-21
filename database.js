@@ -7,7 +7,8 @@ mongoose
   .catch(err => {
     debug('server:error')(err);
   });
-
+require('./models/user');
+require('./models/event');
 require('./models/booking');
 
 const models = {};
