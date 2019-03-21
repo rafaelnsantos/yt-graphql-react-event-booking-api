@@ -10,6 +10,9 @@ const pubsub = require('./pubsub');
 const app = express();
 const { models } = require('./database');
 const dataloaders = require('./graphql/dataloaders');
+const BookingService = require('./services/booking-service');
+const EventService = require('./services/event-service');
+
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -32,7 +35,11 @@ const server = new ApolloServer({
     userId: connection ? null : auth(req.headers.authorization),
     pubsub,
     models,
-    dataloaders
+    dataloaders,
+    services: {
+      Booking: BookingService,
+      Event: EventService
+    }
   })
 });
 

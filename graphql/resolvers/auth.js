@@ -1,13 +1,13 @@
 exports.resolver = {
   User: {
-    createdEvents: ({ createdEvents }, _, { dataloaders: { eventLoader } }, info) =>
-      eventLoader(info).loadMany(createdEvents)
+    createdEvents: ({ createdEvents }, _, ctx, info) =>
+      ctx.dataloaders.eventLoader(info).loadMany(createdEvents)
   },
   Mutation: {
-    createUser: async (_, { email, password }, { models: { User } }) =>
-      User.createNew(email, password)
+    createUser: async (_, { email, password }, ctx) =>
+      ctx.models.User.createNew(email, password)
   },
   Query: {
-    login: (_, { email, password }, { models: { User } }) => User.login(email, password)
+    login: (_, { email, password }, ctx) => ctx.models.User.login(email, password)
   }
 };
