@@ -1,16 +1,12 @@
 const DataLoader = require('dataloader');
 
-const Event = require('../../models/event');
-const User = require('../../models/user');
-const infoToProjection = require('../mongodb-projection');
+const Event = require('../models/event');
+const User = require('../models/user');
+const infoToProjection = require('./mongodb-projection');
 
-exports.userLoader = info => {
-  return Loader('user', User, info);
-};
+const userLoader = info => Loader('user', User, info);
 
-exports.eventLoader = eventLoader = info => {
-  return Loader('event', Event, info);
-};
+const eventLoader = info => Loader('event', Event, info);
 
 const Loader = (name, Model, info) => {
   info = infoToProjection(info);
@@ -24,3 +20,5 @@ const Loader = (name, Model, info) => {
   }
   return this[`${name}Loader`];
 };
+
+module.exports = { userLoader, eventLoader };

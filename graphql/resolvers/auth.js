@@ -1,16 +1,13 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const User = require('../../models/user');
-const { eventLoader } = require('./dataloaders');
-
 exports.resolver = {
   User: {
-    createdEvents: ({ createdEvents }, _, ctx, info) =>
+    createdEvents: ({ createdEvents }, _, { dataloaders: { eventLoader } }, info) =>
       eventLoader(info).loadMany(createdEvents)
   },
   Mutation: {
-    createUser: async (_, { userInput }) => {
+    createUser: async (_, { userInput }, { models: { User } }) => {
       const { email, password } = userInput;
       try {
         const existingUser = await User.findOne({ email: email }, { _id: 1 });
@@ -29,7 +26,7 @@ exports.resolver = {
     }
   },
   Query: {
-    login: async (_, { email, password }) => {
+    login: async (_, { email, password }, { models: { User } }) => {
       const user = await User.findOne({ email: email }, { password: 1 });
       if (!user) {
         throw new Error('User does not exist!');

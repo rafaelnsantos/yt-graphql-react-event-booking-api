@@ -1,20 +1,19 @@
-const Event = require('../../models/event');
-const Booking = require('../../models/booking');
-const { userLoader, eventLoader } = require('./dataloaders');
 const infoToProjection = require('../mongodb-projection');
 
 exports.resolver = {
   Booking: {
-    event: ({ event }, _, ctx, info) =>
+    event: ({ event }, _, { dataloaders: { eventLoader } }, info) =>
       eventLoader(info).load(event.toString()),
-    user: ({ user }, _, ctx, info) => userLoader(info).load(user.toString())
+    user: ({ user }, _, { dataloaders: { userLoader } }, info) =>
+      userLoader(info).load(user.toString())
   },
   Query: {
-    bookings: (_, args, { userId }, info) =>
+    bookings: (_, args, { userId, models: { Booking } }, info) =>
       Booking.find({ user: userId }, infoToProjection(info))
   },
   Mutation: {
-    bookEvent: async (_, { eventId }, { userId }) => {
+    bookEvent: async (_, { eventId }, { userId, models }) => {
+      const { Booking, Event } = models;
       const fetchedEvent = await Event.findOne({ _id: eventId }, { _id: 1 });
       const booking = new Booking({
         user: userId,
@@ -22,7 +21,8 @@ exports.resolver = {
       });
       return booking.save();
     },
-    cancelBooking: async (_, { bookingId }, { userId }, info) => {
+    cancelBooking: async (_, { bookingId }, { userId, models }, info) => {
+      const { Booking, Event } = models;
       try {
         const booking = await Booking.findOne({ _id: bookingId, user: userId });
         await Booking.deleteOne({ _id: bookingId, user: userId });

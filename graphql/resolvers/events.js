@@ -1,21 +1,19 @@
-const Event = require('../../models/event');
-const User = require('../../models/user');
-
-const { userLoader } = require('./dataloaders');
 const infoToProjection = require('../mongodb-projection');
 const { NEW_EVENT, UPDATED_EVENT } = require('../subscriptions/channels');
 
 exports.resolver = {
   Event: {
-    creator: ({ creator }, _, ctx, info) =>
+    creator: ({ creator }, _, { dataloaders: { userLoader } }, info) =>
       userLoader(info).load(creator.toString())
   },
   Query: {
-    events: (_, args, ctx, info) => Event.find({}, infoToProjection(info))
+    events: (_, args, { models: { Event } }, info) =>
+      Event.find({}, infoToProjection(info))
   },
   Mutation: {
-    createEvent: async (_, { eventInput }, { userId, pubsub }) => {
+    createEvent: async (_, { eventInput }, { userId, pubsub, models }) => {
       const { title, description, price, date } = eventInput;
+      const { Event, User } = models;
 
       const event = new Event({
         title: title,
@@ -27,10 +25,7 @@ exports.resolver = {
 
       try {
         const createdEvent = await event.save();
-        const creator = await User.findOne(
-          { _id: userId },
-          { createdEvents: 1 }
-        );
+        const creator = await User.findOne({ _id: userId }, { createdEvents: 1 });
 
         if (!creator) {
           throw new Error('User not found.');
@@ -44,7 +39,7 @@ exports.resolver = {
         throw err;
       }
     },
-    updateEvent: async (_, { input }, { userId, pubsub }, info) => {
+    updateEvent: async (_, { input }, { userId, pubsub, models: { Event } }, info) => {
       const event = await Event.findOneAndUpdate(
         { _id: input._id, creator: userId },
         input.event,

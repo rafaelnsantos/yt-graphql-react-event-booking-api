@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { ApolloServer } = require('apollo-server-express');
-const mongoose = require('mongoose');
 const { createServer } = require('http');
 
 const graphQLSchema = require('./schema');
@@ -9,7 +8,8 @@ const auth = require('./middleware/auth');
 const debug = require('debug');
 const pubsub = require('./pubsub');
 const app = express();
-
+const { models } = require('./database');
+const dataloaders = require('./graphql/dataloaders');
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -30,7 +30,9 @@ const server = new ApolloServer({
   },
   context: ({ req, connection }) => ({
     userId: connection ? null : auth(req.headers.authorization),
-    pubsub
+    pubsub,
+    models,
+    dataloaders
   })
 });
 
@@ -39,13 +41,5 @@ server.applyMiddleware({ app });
 const httpServer = createServer(app);
 
 server.installSubscriptionHandlers(httpServer);
-
-mongoose
-  .connect(`${process.env.MONGO_URI}?retryWrites=true`, {
-    useNewUrlParser: true
-  })
-  .catch(err => {
-    debug('server:error')(err);
-  });
 
 module.exports = httpServer;
