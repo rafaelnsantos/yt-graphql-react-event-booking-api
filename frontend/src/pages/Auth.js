@@ -32,7 +32,7 @@ const AuthPage = props => {
     `;
     const createMutation = `
       mutation ($email: Email!, $password: String!) {
-        createUser(userInput: {email: $email, password: $password}) {
+        createUser(email: $email, password: $password) {
           _id
           email
         }

@@ -20,8 +20,8 @@ const eventSchema = new Schema({
     required: true
   },
   creator: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }
 });
 

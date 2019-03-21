@@ -39,11 +39,6 @@ input EventInput {
   date: DateTime!
 }
 
-input UserInput {
-  email: Email!
-  password: String!
-}
-
 input UpdateEventInput {
   _id: ID!
   event: EventInput!
@@ -58,7 +53,7 @@ type Query {
 type Mutation {
   createEvent(eventInput: EventInput!): Event! @isAuth
   updateEvent(input: UpdateEventInput!): Event! @isAuth
-  createUser(userInput: UserInput!): User
+  createUser(email: Email!, password: String!): User
   bookEvent(eventId: ID!): Booking! @isAuth
   cancelBooking(bookingId: ID!): Event! @isAuth
 }
