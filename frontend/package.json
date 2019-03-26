@@ -25,8 +25,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "cucumber-js",
-    "eject": "react-scripts eject"
+    "test": "npm run build_testing && cucumber-js",
+    "eject": "react-scripts eject",
+    "build_testing": "env-cmd .env.test npm run build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -40,7 +41,11 @@
   "devDependencies": {
     "chromedriver": "^2.46.0",
     "cucumber": "^5.1.0",
-    "selenium-webdriver": "^4.0.0-alpha.1"
+    "dotenv": "^7.0.0",
+    "env-cmd": "^8.0.2",
+    "finalhandler": "^1.1.1",
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "serve-static": "^1.13.2"
   },
-  "homepage": "https://rafaelnsantos.github.io/yt-graphql-react-event-booking-api/"
+  "homepage": "."
 }

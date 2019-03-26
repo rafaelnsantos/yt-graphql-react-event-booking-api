@@ -23,7 +23,7 @@ install:
 script:
   - npm test
   - cd frontend
-  # - npm test
+  - npm test
 
 before_deploy:
   - npm run build
@@ -34,4 +34,4 @@ deploy:
   github_token: $GITHUB_TOKEN
   local_dir: frontend/build
   on:
-    branch: 45-recaptcha
+    branch: 46-travis-react

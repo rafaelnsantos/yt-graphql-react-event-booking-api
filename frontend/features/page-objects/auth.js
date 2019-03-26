@@ -3,7 +3,7 @@ const { By } = require('selenium-webdriver');
 class AuthPage extends Page {
   constructor(driver) {
     super(driver);
-    this.open('http://localhost:3000/auth');
+    this.open(process.env.TEST_URL);
   }
 
   get email() {
