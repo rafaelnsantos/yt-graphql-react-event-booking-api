@@ -5,6 +5,7 @@ import { AuthContext } from '../context';
 const AuthProvider = props => {
   const [token, setToken] = useState(localStorage.getItem('token', null));
   const [userId, setUserId] = useState(localStorage.getItem('userId', null));
+  const [recaptcha, setRecaptcha] = useState();
 
   const login = (token, userId, tokenExpiration) => {
     setToken(token);
@@ -25,7 +26,9 @@ const AuthProvider = props => {
         token: token,
         userId: userId,
         login: login,
-        logout: logout
+        logout: logout,
+        recaptcha,
+        setRecaptcha
       }}
     >
       {props.children}

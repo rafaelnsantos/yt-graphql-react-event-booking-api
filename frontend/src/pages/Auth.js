@@ -1,22 +1,26 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import './Auth.css';
 import { AuthContext, GraphQLContext, NotificationContext } from '../context';
 import { Formik } from 'formik';
 import { object, string } from 'yup';
 import { Input, Form } from '../components/Form';
 import { Error } from '../components';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const AuthPage = props => {
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState();
 
-  const { login } = useContext(AuthContext);
+  const { login, setRecaptcha, recaptcha } = useContext(AuthContext);
   const { query, mutate } = useContext(GraphQLContext);
   const { sendNotification } = useContext(NotificationContext);
+  const recaptchaRef = useRef();
 
   const switchModeHandler = () => {
     setIsLogin(!isLogin);
     setError();
+    recaptchaRef.current.reset();
+    setRecaptcha();
   };
 
   const submitHandler = async (values, { setSubmitting }) => {
@@ -59,6 +63,10 @@ const AuthPage = props => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleCaptchaResponseChange = token => {
+    setRecaptcha(token);
   };
 
   return (
@@ -116,13 +124,18 @@ const AuthPage = props => {
           )}
           <Error message={error} />
           <div className="form-actions">
-            <button type="submit" id="submit">
+            <button type="submit" id="submit" disabled={!recaptcha}>
               {isLogin ? 'Login' : 'Signup'}
             </button>
             <button type="button" onClick={switchModeHandler}>
               Switch to {isLogin ? 'Signup' : 'Login'}
             </button>
           </div>
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+            onChange={handleCaptchaResponseChange}
+          />
         </Form>
       )}
     </Formik>

@@ -10,7 +10,7 @@ import { ApolloProvider } from 'react-apollo';
 import { AuthContext } from '../context';
 
 const apolloProvider = ({ children }) => {
-  const { token } = useContext(AuthContext);
+  const { token, recaptcha } = useContext(AuthContext);
   const httpLink = new HttpLink({
     uri: process.env.REACT_APP_GRAPHQL
   });
@@ -32,7 +32,8 @@ const apolloProvider = ({ children }) => {
   const authLink = setContext((_, { headers }) => ({
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : ''
+      authorization: token ? `Bearer ${token}` : '',
+      recaptcha
     }
   }));
 
