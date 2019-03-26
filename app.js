@@ -18,7 +18,10 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, Recaptcha'
+  );
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
@@ -31,16 +34,23 @@ const server = new ApolloServer({
     debug('graphql:error')(err);
     return err;
   },
-  context: ({ req, connection }) => ({
-    userId: connection ? null : auth(req.headers.authorization),
-    pubsub,
-    models,
-    dataloaders,
-    services: {
-      Booking: BookingService,
-      Event: EventService
-    }
-  })
+  context: ({ req, connection }) =>
+    connection
+      ? { pubsub, dataloaders }
+      : {
+          userId: auth(req.headers.authorization),
+          pubsub,
+          models,
+          dataloaders,
+          services: {
+            Booking: BookingService,
+            Event: EventService
+          },
+          recaptchaData: {
+            ip: req.ip,
+            key: req.headers.recaptcha
+          }
+        }
 });
 
 server.applyMiddleware({ app });

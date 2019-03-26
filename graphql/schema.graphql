@@ -1,4 +1,5 @@
 directive @isAuth on FIELD_DEFINITION
+directive @recaptcha on FIELD_DEFINITION
 
 scalar DateTime
 scalar Email
@@ -47,13 +48,13 @@ input UpdateEventInput {
 type Query {
   events: [Event!]!
   bookings: [Booking!]! @isAuth
-  login(email: Email!, password: String!): AuthData!
+  login(email: Email!, password: String!): AuthData! @recaptcha
 }
 
 type Mutation {
   createEvent(eventInput: EventInput!): Event! @isAuth
   updateEvent(input: UpdateEventInput!): Event! @isAuth
-  createUser(email: Email!, password: String!): User
+  createUser(email: Email!, password: String!): User @recaptcha
   bookEvent(eventId: ID!): Booking! @isAuth
   cancelBooking(bookingId: ID!): Event! @isAuth
 }

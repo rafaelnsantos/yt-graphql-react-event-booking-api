@@ -10,6 +10,7 @@ describe('An user', () => {
     };
     return request(app)
       .post('/graphql')
+      .set('recaptcha', 'test')
       .send(queryLogin)
       .expect(200)
       .expect(res => {

@@ -7,6 +7,8 @@
         "REDIS_PASSWORD": "",
         "REDIS_HOST": "localhost",
         "REDIS_PORT": 6379,
-        "DEBUG": "graphql:* server:* middleware:*"
+        "DEBUG": "graphql:* server:* middleware:*",
+        "RECAPTCHA_SECRET_KEY": "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe",
+        "RECAPTCHA_SITE_KEY": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
     }
 }
