@@ -4,6 +4,8 @@ node_js:
 
 addons:
   chrome: stable
+  sonarcloud:
+    organization: "rafaelnsantos-github"
 
 cache:
   directories:
@@ -24,8 +26,11 @@ script:
   - npm test
   - cd frontend
   - npm test
+  - cd ..
+  - sonar-scanner
 
 before_deploy:
+  - cd frontend
   - npm run build
 
 deploy:
