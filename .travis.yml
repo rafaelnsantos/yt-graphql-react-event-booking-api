@@ -25,6 +25,7 @@ install:
 script:
   - npm test
   - cd frontend
+  - npm run build_testing
   - npm test
   - cd ..
   - sonar-scanner
@@ -39,4 +40,4 @@ deploy:
   github_token: $GITHUB_TOKEN
   local_dir: frontend/build
   on:
-    branch: 46-travis-react
+    branch: 47-google-analytics

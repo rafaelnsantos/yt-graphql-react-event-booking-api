@@ -9,22 +9,26 @@ import {
 } from './provider';
 import { MainNavigation, Notification } from './components';
 import './App.css';
+import GAListener from './GAListener';
+
 const App = props => {
   return (
     <BrowserRouter>
-      <NotificationProvider>
-        <AuthProvider>
-          <ApolloProvider>
-            <GraphQLProvider>
-              <MainNavigation />
-              <main className="main-content">
-                <Routes />
-              </main>
-              <Notification />
-            </GraphQLProvider>
-          </ApolloProvider>
-        </AuthProvider>
-      </NotificationProvider>
+      <GAListener>
+        <NotificationProvider>
+          <AuthProvider>
+            <ApolloProvider>
+              <GraphQLProvider>
+                <MainNavigation />
+                <main className="main-content">
+                  <Routes />
+                </main>
+                <Notification />
+              </GraphQLProvider>
+            </ApolloProvider>
+          </AuthProvider>
+        </NotificationProvider>
+      </GAListener>
     </BrowserRouter>
   );
 };

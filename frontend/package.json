@@ -16,6 +16,7 @@
     "react-apollo": "^2.5.2",
     "react-chartjs": "^1.2.0",
     "react-dom": "^16.8.3",
+    "react-ga": "^2.5.7",
     "react-google-recaptcha": "^1.0.5",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.2",
@@ -25,7 +26,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "npm run build_testing && cucumber-js",
+    "test": "cucumber-js",
     "eject": "react-scripts eject",
     "build_testing": "env-cmd .env.test npm run build"
   },
