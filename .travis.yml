@@ -40,4 +40,4 @@ deploy:
   github_token: $GITHUB_TOKEN
   local_dir: frontend/build
   on:
-    branch: 47-google-analytics
+    branch: 48-i18n
