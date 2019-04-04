@@ -6,10 +6,12 @@ import { object, string } from 'yup';
 import { Input, Form } from '../components/Form';
 import { Error } from '../components';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { useTranslation } from 'react-i18next';
 
 const AuthPage = props => {
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState();
+  const { t } = useTranslation();
 
   const { login, setRecaptcha, recaptcha } = useContext(AuthContext);
   const { query, mutate } = useContext(GraphQLContext);
@@ -54,7 +56,7 @@ const AuthPage = props => {
           variables: values
         });
         const { email } = data.createUser;
-        sendNotification(`${email} registered successfully`);
+        sendNotification(email + ' ' + t('auth:registered successfully'));
         values.password = '';
         setIsLogin(true);
       }
@@ -62,6 +64,7 @@ const AuthPage = props => {
       setError(err.message);
     } finally {
       setSubmitting(false);
+      setRecaptcha();
     }
   };
 
@@ -80,13 +83,13 @@ const AuthPage = props => {
       validationSchema={object().shape({
         email: string()
           .email('Email not valid')
-          .required('Email is required'),
+          .required(t('auth:Email is required')),
         password: string()
           .min(3, 'Minimum length is 3')
-          .required('Password is required!'),
+          .required(t('auth:Password is required')),
         confirmPassword: string().test(
           'passwords-match',
-          'Passwords must match',
+          t('auth:Passwords must match'),
           function(value) {
             return isLogin || this.parent.password === value;
           }
@@ -98,16 +101,16 @@ const AuthPage = props => {
           <Input
             id="email"
             formikKey="email"
-            label="Email"
+            label={t('auth:Email')}
             formikProps={formikProps}
-            placeholder="Enter your email"
+            placeholder={t('auth:Enter your email')}
             type="email"
           />
           <Input
             id="password"
             formikKey="password"
-            label="Password"
-            placeholder="Password"
+            label={t('auth:Password')}
+            placeholder={t('auth:Password')}
             autoComplete={isLogin ? 'current-password' : 'new-password'}
             formikProps={formikProps}
             type="password"
@@ -117,25 +120,29 @@ const AuthPage = props => {
               id="confirm-password"
               formikKey="confirmPassword"
               formikProps={formikProps}
-              label="Confirm Password"
-              placeholder="Confirm Password"
+              label={t('auth:Confirm Password')}
+              placeholder={t('auth:Confirm Password')}
               type="password"
             />
           )}
-          <Error message={error} />
-          <div className="form-actions">
-            <button type="submit" id="submit" disabled={!recaptcha}>
-              {isLogin ? 'Login' : 'Signup'}
-            </button>
-            <button type="button" onClick={switchModeHandler}>
-              Switch to {isLogin ? 'Signup' : 'Login'}
-            </button>
-          </div>
           <ReCAPTCHA
             ref={recaptchaRef}
             sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
             onChange={handleCaptchaResponseChange}
           />
+          <Error message={error} />
+          <div className="form-actions">
+            <button type="submit" id="submit" disabled={!recaptcha}>
+              {t(isLogin ? 'auth:Login' : 'auth:Signup')}
+            </button>
+            <div onClick={switchModeHandler}>
+              {t(
+                isLogin
+                  ? 'auth:Dont have an account? Register'
+                  : 'auth:Already have an account? Login'
+              )}
+            </div>
+          </div>
         </Form>
       )}
     </Formik>
