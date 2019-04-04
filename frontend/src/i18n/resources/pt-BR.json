@@ -1,0 +1,24 @@
+{
+    "commom": {
+    },
+    "navigation": {
+        "Events": "Eventos",
+        "Authenticate": "Autenticar",
+        "Bookings": "Reservas",
+        "Logout": "Deslogar"
+    },
+    "auth": {
+        "Signup": "Registrar",
+        "Password": "Senha",
+        "Enter your email": "Digite seu email",
+        "Email": "Email",
+        "Email is required": "Email é obrigatório",
+        "Password is required": "Senha é obrigatória",
+        "Passwords must match": "Senhas não conferem",
+        "registered successfully": "registrado com sucesso",
+        "Confirm Password": "Confirme a senha",
+        "Switch to Login": "Mudar para Login",
+        "Dont have an account? Register": "Não tem cadastro? Clique aqui",
+        "Already have an account? Login": "Já possui cadastro? Clique aqui"
+    }
+}
