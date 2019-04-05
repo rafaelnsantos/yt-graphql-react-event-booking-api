@@ -1,0 +1,25 @@
+{
+    "commom": {
+        "Cancel": "Cancelar"
+    },
+    "navigation": {
+        "Events": "Eventos",
+        "Bookings": "Reservas",
+        "Authenticate": "Autenticar",
+        "Logout": "Cerrar sesión"
+    },
+    "auth": {
+        "Signup": "Registrarse",
+        "Password": "Contraseña",
+        "Enter your email": "Introduzca su correo electrónico",
+        "Email": "Email",
+        "Email is required": "Se requiere email",
+        "Password is required": "Se requiere contraseña",
+        "Passwords must match": "Las contraseñas deben coincidir",
+        "registered successfully": "registrado con éxito",
+        "Confirm Password": "Confirmar contraseña",
+        "Switch to Login": "Cambiar a Login",
+        "Dont have an account? Register": "No tienes una cuenta ? Haz clic aquí",
+        "Already have an account? Login": "¿Ya tienes una cuenta? Haz clic aquí"
+    }
+}
