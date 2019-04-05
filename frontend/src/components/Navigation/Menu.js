@@ -13,13 +13,17 @@ const Menu = ({ close }) => {
     </li>
   );
 
+  const LanguageButton = ({ language, children }) =>
+    i18n.language !== language && (
+      <button onClick={() => i18n.changeLanguage(language)}>{children}</button>
+    );
+
   return (
     <ul>
-      {i18n.language === 'en-US' ? (
-        <button onClick={() => i18n.changeLanguage('pt-BR')}>pt</button>
-      ) : (
-        <button onClick={() => i18n.changeLanguage('en-US')}>en</button>
-      )}
+      <LanguageButton language="en-US">us</LanguageButton>
+      <LanguageButton language="pt-BR">pt</LanguageButton>
+      <LanguageButton language="es-ES">es</LanguageButton>
+
       {!token && (
         <LiNavLink to="/auth">{t('navigation:Authenticate')}</LiNavLink>
       )}
