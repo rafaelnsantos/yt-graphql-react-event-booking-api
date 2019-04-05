@@ -1,0 +1,7 @@
+project_identifier: 'Event Booking'
+api_key_env: CROWDIN_API_KEY
+
+files:
+  -
+   source: '/frontend/src/i18n/resources/en-US.json'
+   translation: '/frontend/src/i18n/resources/%locale%.json'
