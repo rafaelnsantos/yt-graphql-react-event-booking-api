@@ -1,12 +1,12 @@
 {
     "commom": {
-        "Cancel": "Cancel"
+        "Cancel": "Cancelar"
     },
     "navigation": {
         "Events": "Eventos",
         "Bookings": "Reservas",
         "Authenticate": "Autenticar",
-        "Logout": "Deslogar"
+        "Logout": "Sair"
     },
     "auth": {
         "Signup": "Registrar",
