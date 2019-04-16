@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import Routes from './Routes';
 import {
   AuthProvider,
@@ -17,7 +17,7 @@ import i18n from './i18n/i18n';
 const App = props => {
   return (
     <I18nextProvider i18n={i18n}>
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <HashRouter basename={process.env.PUBLIC_URL}>
         <GAListener>
           <NotificationProvider>
             <AuthProvider>
@@ -33,7 +33,7 @@ const App = props => {
             </AuthProvider>
           </NotificationProvider>
         </GAListener>
-      </BrowserRouter>
+      </HashRouter>
     </I18nextProvider>
   );
 };
