@@ -17,7 +17,7 @@ import i18n from './i18n/i18n';
 const App = props => {
   return (
     <I18nextProvider i18n={i18n}>
-      <BrowserRouter>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
         <GAListener>
           <NotificationProvider>
             <AuthProvider>
