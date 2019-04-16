@@ -30,6 +30,9 @@ script:
   - cd ..
   - sonar-scanner
 
+after_success:
+  - curl -X POST -d {} https://api.netlify.com/build_hooks/$NETLIFY_BUILD_TOKEN
+
 before_deploy:
   - cd frontend
   - npm run build
