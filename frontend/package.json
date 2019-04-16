@@ -51,5 +51,5 @@
     "selenium-webdriver": "^4.0.0-alpha.1",
     "serve-static": "^1.13.2"
   },
-  "homepage": "https://rafaelnsantos.github.io/yt-graphql-react-event-booking-api"
+  "homepage": "."
 }
