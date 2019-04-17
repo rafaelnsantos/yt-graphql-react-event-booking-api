@@ -5,7 +5,8 @@ import {
   AuthProvider,
   GraphQLProvider,
   NotificationProvider,
-  ApolloProvider
+  ApolloProvider,
+  RollbarProvider
 } from './provider';
 import { MainNavigation, Notification } from './components';
 import './App.css';
@@ -16,25 +17,27 @@ import i18n from './i18n/i18n';
 
 const App = props => {
   return (
-    <I18nextProvider i18n={i18n}>
-      <HashRouter>
-        <GAListener>
-          <NotificationProvider>
-            <AuthProvider>
-              <ApolloProvider>
-                <GraphQLProvider>
-                  <MainNavigation />
-                  <main className="main-content">
-                    <Routes />
-                  </main>
-                  <Notification />
-                </GraphQLProvider>
-              </ApolloProvider>
-            </AuthProvider>
-          </NotificationProvider>
-        </GAListener>
-      </HashRouter>
-    </I18nextProvider>
+    <RollbarProvider>
+      <I18nextProvider i18n={i18n}>
+        <HashRouter>
+          <GAListener>
+            <NotificationProvider>
+              <AuthProvider>
+                <ApolloProvider>
+                  <GraphQLProvider>
+                    <MainNavigation />
+                    <main className="main-content">
+                      <Routes />
+                    </main>
+                    <Notification />
+                  </GraphQLProvider>
+                </ApolloProvider>
+              </AuthProvider>
+            </NotificationProvider>
+          </GAListener>
+        </HashRouter>
+      </I18nextProvider>
+    </RollbarProvider>
   );
 };
 
