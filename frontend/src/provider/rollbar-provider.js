@@ -7,6 +7,9 @@ const AuthProvider = props => {
     accessToken: process.env.REACT_APP_ROLLBAR_TOKEN,
     captureUncaught: true,
     captureUnhandledRejections: true,
+    payload: {
+      environment: process.env.NODE_ENV
+    },
     enabled: process.env.NODE_ENV === 'production'
   });
 
