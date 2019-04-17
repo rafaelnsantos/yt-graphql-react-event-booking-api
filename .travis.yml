@@ -32,3 +32,11 @@ script:
 
 after_success:
   - curl -X POST -d {} https://api.netlify.com/build_hooks/$NETLIFY_BUILD_TOKEN
+  - ENVIRONMENT=production
+  - LOCAL_USERNAME=`whoami`
+  - REVISION=`git rev-parse --verify HEAD`
+  - curl https://api.rollbar.com/api/1/deploy/ \ 
+    -F access_token=$ROLLBAR_ACCESS_TOKEN \ 
+    -F environment=$ENVIRONMENT \ 
+    -F revision=$REVISION \ 
+    -F local_username=$LOCAL_USERNAME
