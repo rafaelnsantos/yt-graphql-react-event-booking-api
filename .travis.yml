@@ -32,15 +32,3 @@ script:
 
 after_success:
   - curl -X POST -d {} https://api.netlify.com/build_hooks/$NETLIFY_BUILD_TOKEN
-
-before_deploy:
-  - cd frontend
-  - npm run build
-
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  local_dir: frontend/build
-  on:
-    branch: 48-i18n
