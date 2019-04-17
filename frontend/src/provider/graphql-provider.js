@@ -1,5 +1,10 @@
 import React, { useContext } from 'react';
-import { GraphQLContext, AuthContext, NotificationContext } from '../context';
+import {
+  GraphQLContext,
+  AuthContext,
+  NotificationContext,
+  RollbarContext
+} from '../context';
 import { withRouter } from 'react-router-dom';
 
 import { withApollo } from 'react-apollo';
@@ -8,9 +13,11 @@ import gql from 'graphql-tag';
 const GraphQLProvider = ({ children, history, client }) => {
   const { logout } = useContext(AuthContext);
   const { sendError } = useContext(NotificationContext);
+  const { logError } = useContext(RollbarContext);
 
   const Error = err => {
     err.message = err.message.substring(err.message.indexOf(':') + 1);
+    logError(err.message);
     if (err.message === 'Unauthenticated') {
       logout();
       sendError('Token expired, please do login again');
